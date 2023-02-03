@@ -73,8 +73,8 @@ const Home = () => {
           <Enemy
             fight={handleFight}
             name='Ice Wolf'
-            healthPoints={50}
-            maxHealthPoints={50}
+            health_points={50}
+            max_health_points={50}
             level={2}
             power={6}
             image={'images/wolf.png'}
@@ -83,8 +83,8 @@ const Home = () => {
           <Enemy
             fight={handleFight}
             name='Super Wolf'
-            healthPoints={80}
-            maxHealthPoints={80}
+            health_points={80}
+            max_health_points={80}
             level={3}
             power={10}
             image={'images/wolf.png'}
@@ -93,8 +93,8 @@ const Home = () => {
           <Enemy
             fight={handleFight}
             name='Weirdo'
-            healthPoints={100}
-            maxHealthPoints={100}
+            health_points={100}
+            max_health_points={100}
             level={3}
             power={10}
             image={'images/dragon.png'}
@@ -103,8 +103,8 @@ const Home = () => {
           <Enemy
             fight={handleFight}
             name='Little Demon'
-            healthPoints={200}
-            maxHealthPoints={200}
+            health_points={200}
+            max_health_points={200}
             level={5}
             power={50}
             image={'images/dragon.png'}

@@ -14,7 +14,7 @@ import {
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 
-const Enemy = ({
+const CharacterNPC = ({
   fight,
   name,
   health_points,
@@ -66,4 +66,4 @@ const Enemy = ({
   )
 }
 
-export default Enemy
+export default CharacterNPC

@@ -2,7 +2,7 @@
 import { apiSlice } from '../api/apiSlice'
 
 export const playerApiSlice = apiSlice.injectEndpoints({
-  tagTypes: ['Player'],
+  tagTypes: ['Player', 'Inventory'],
   endpoints: (builder) => ({
     getCurrentPlayer: builder.query<any, void>({
       query: () => `/auth/me`,
@@ -16,8 +16,24 @@ export const playerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Player'],
     }),
+    getInventory: builder.query<any, void>({
+      query: () => `/auth/me-inventory`,
+      providesTags: ['Inventory'],
+    }),
+    updateInventory: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/auth/updateMe-inventory`,
+        method: 'PATCH',
+        body: { ...data },
+      }),
+      invalidatesTags: ['Inventory'],
+    }),
   }),
 })
 
-export const { useGetCurrentPlayerQuery, useUpdateCurrentPlayerMutation } =
-  playerApiSlice
+export const {
+  useGetCurrentPlayerQuery,
+  useUpdateCurrentPlayerMutation,
+  useGetInventoryQuery,
+  useUpdateInventoryMutation,
+} = playerApiSlice

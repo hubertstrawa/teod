@@ -51,7 +51,9 @@ export default function Home() {
       <main>
         {token && (
           <Button>
-            <Link href={'/game'}>PRZEJDZ DO GRY</Link>
+            <Link style={{ border: '1px solid red' }} href={'/game'}>
+              PRZEJDZ DO GRY
+            </Link>
           </Button>
         )}
         <form onSubmit={submitHandler}>

@@ -49,7 +49,11 @@ const BattleEnemy = ({
   playerAttackValue,
   playerAttack,
 }: any) => {
+  console.log('healthPoints', healthPoints)
+  console.log('maxHealthPoints', maxHealthPoints)
+
   const healthPercent = (100 * healthPoints) / maxHealthPoints
+  console.log('healthPercent', healthPercent)
 
   // console.log('health%%', healthPercent)
   // console.log('healthPoints', healthPoints)
@@ -220,7 +224,7 @@ const Battle = ({
     // console.log('isPlayerTurn', isPlayerTurn)
 
     // console.log('isBattleOver', isBattleOver)
-    if (currentEnemy.healthPoints === 0) {
+    if (currentEnemy.health_points === 0) {
       // setIsBattleOver(true)
       setBattleStatus({
         ...battleStatus,
@@ -280,7 +284,8 @@ const Battle = ({
     if (battleStatus.isBattleOver) {
       // const newExp = 10;
       // console.log(level * 100)
-      // const expNeededForLevel = (level * (level +1)) * 100
+      const expNeededForLevel = level * (level + 1) * 100
+      console.log('expNeededForLevel', expNeededForLevel)
       updatePlayer({
         health_points,
         mana_points,
@@ -312,8 +317,8 @@ const Battle = ({
         playerAttack: AttackType.NORMAL,
         playerAttackValue: playerHitValue,
       })
-      const lastHit = playerHitValue > currentEnemy.healthPoints
-      if (lastHit || currentEnemy.healthPoints === 0) {
+      const lastHit = playerHitValue > currentEnemy.health_points
+      if (lastHit || currentEnemy.health_points === 0) {
         setBattleStatus({
           ...battleStatus,
           isBattleOver: true,
@@ -324,9 +329,9 @@ const Battle = ({
       setCurrentEnemy((prev: any) => {
         return {
           ...prev,
-          healthPoints: lastHit
+          health_points: lastHit
             ? 0
-            : currentEnemy.healthPoints - playerHitValue,
+            : currentEnemy.health_points - playerHitValue,
         }
       })
     }
@@ -351,8 +356,8 @@ const Battle = ({
         playerAttack: AttackType.FIRE,
         playerAttackValue: playerHitValue,
       })
-      const lastHit = playerHitValue > currentEnemy.healthPoints
-      if (lastHit || currentEnemy.healthPoints === 0) {
+      const lastHit = playerHitValue > currentEnemy.health_points
+      if (lastHit || currentEnemy.health_points === 0) {
         setBattleStatus({
           ...battleStatus,
           isBattleOver: true,
@@ -366,9 +371,9 @@ const Battle = ({
       setCurrentEnemy((prev: any) => {
         return {
           ...prev,
-          healthPoints: lastHit
+          health_points: lastHit
             ? 0
-            : currentEnemy.healthPoints - playerHitValue,
+            : currentEnemy.health_points - playerHitValue,
         }
       })
     }
@@ -395,7 +400,7 @@ const Battle = ({
     },
   }
 
-  console.log('battleStt', battleStatus)
+  console.log('CURRENT ENEMY', currentEnemy)
 
   return (
     <Modal
@@ -425,7 +430,7 @@ const Battle = ({
                 fontSize='sm'
                 textAlign='left'
               >
-                {currentEnemy.healthPoints}{' '}
+                {currentEnemy.health_points}{' '}
                 <HeartIcon style={{ marginLeft: '5px' }} />
                 {/* <span style={{ margin: '0 5px' }}>|</span>
                 {mana_points} <ManaIcon style={{ marginLeft: '5px' }} /> */}
@@ -436,10 +441,10 @@ const Battle = ({
           {/* {isBattleOver && 'YOU WON!'}
             {isPlayerTurn &&
               !isBattleOver &&
-              `Your turn ---- (ENEMY HP: ${currentEnemy.healthPoints})`}
+              `Your turn ---- (ENEMY HP: ${currentEnemy.health_points})`}
             {!isPlayerTurn &&
               !isBattleOver &&
-              `ENEMY TURN (ENEMY HP: ${currentEnemy.healthPoints})`} */}
+              `ENEMY TURN (ENEMY HP: ${currentEnemy.health_points})`} */}
         </ModalHeader>
         <ModalCloseButton disabled={!battleStatus.isBattleOver} />
         <ModalBody
@@ -511,8 +516,8 @@ const Battle = ({
             >
               <GridItem area={'c-1'}>
                 <BattleEnemy
-                  healthPoints={currentEnemy.healthPoints}
-                  maxHealthPoints={currentEnemy.maxHealthPoints}
+                  healthPoints={currentEnemy.health_points}
+                  maxHealthPoints={currentEnemy.max_health_points}
                   playerAttack={battleStatus.playerAttack}
                   playerAttackValue={battleStatus.playerAttackValue}
                 />
