@@ -20,9 +20,9 @@ import { m } from 'framer-motion'
 const PlayerBadge = ({ player }) => {
   if (!player?.data) return null
   const {
-    player_name,
-    health_points,
-    mana_points,
+    playerName,
+    healthPoints,
+    manaPoints,
     power,
     energy,
     experience,
@@ -42,9 +42,10 @@ const PlayerBadge = ({ player }) => {
       />
       <Box ml='3' display={'flex'}>
         <Box fontWeight='bold'>
-          {player_name}
+          {playerName}
           <Badge ml='1' colorScheme='green'>
-            {level} LEVEL ({race ?? 'mage'}) / {experience} EXP
+            {/* ({race ?? 'mage'})  */}
+            LEVEL {level} / {experience} EXP
           </Badge>
           <Text fontSize='sm' textAlign='left'>
             Energy: {energy}
@@ -55,9 +56,9 @@ const PlayerBadge = ({ player }) => {
             fontSize='sm'
             textAlign='left'
           >
-            {health_points} <HeartIcon style={{ marginLeft: '5px' }} />
+            {healthPoints} <HeartIcon style={{ marginLeft: '5px' }} />
             <span style={{ margin: '0 5px' }}>|</span>
-            {mana_points} <ManaIcon style={{ marginLeft: '5px' }} />
+            {manaPoints} <ManaIcon style={{ marginLeft: '5px' }} />
           </Text>
         </Box>
       </Box>

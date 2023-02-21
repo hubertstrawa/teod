@@ -18,17 +18,31 @@ const Enemy = ({
   fight,
   name,
   health_points,
+  maxMoney,
   max_health_points,
+  experience,
   level,
   power,
   image,
+  loot,
   type,
 }: any) => {
   const playerHealth = useSelector(
-    (state: RootState) => state.player.health_points
+    (state: RootState) => state.player.healthPoints
   )
   const handleClick = () => {
-    fight({ name, health_points, max_health_points, level, power, image, type })
+    fight({
+      name,
+      experience,
+      health_points,
+      max_health_points,
+      level,
+      loot,
+      power,
+      image,
+      type,
+      maxMoney,
+    })
   }
 
   return (
@@ -46,7 +60,7 @@ const Enemy = ({
           </Flex>
         </Stack>
       </CardBody>
-      <Divider />
+      <Divider mt={'auto'} />
       <CardFooter>
         <ButtonGroup spacing='2'>
           <Button
@@ -55,7 +69,7 @@ const Enemy = ({
             colorScheme='blue'
             onClick={handleClick}
           >
-            Fight
+            Walcz
           </Button>
           {/* <Button variant='ghost' colorScheme='blue'>
             Add to cart

@@ -14,21 +14,9 @@ import {
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 
-const CharacterNPC = ({
-  fight,
-  name,
-  health_points,
-  max_health_points,
-  level,
-  power,
-  image,
-  type,
-}: any) => {
-  const playerHealth = useSelector(
-    (state: RootState) => state.player.health_points
-  )
-  const handleClick = () => {
-    fight({ name, health_points, max_health_points, level, power, image, type })
+const CharacterNPC = ({ talk, name, image }: any) => {
+  const onClickHandler = () => {
+    talk({ name })
   }
 
   return (
@@ -39,23 +27,22 @@ const CharacterNPC = ({
         <Stack mt='6' spacing='3'>
           <Flex justifyContent='space-between' alignItems='center'>
             <Heading size='md'>{name}</Heading>
-            <Flex flexDir='column' textAlign='left'>
+            {/* <Flex flexDir='column' textAlign='left'>
               <Text>Level: {level}</Text>
               <Text>Strength: {power}</Text>
-            </Flex>
+            </Flex> */}
           </Flex>
         </Stack>
+        <Text mt={10} fontSize={'sm'} align='left'>
+          Tajemniczy szaman przemierzający lasy królestwa Moonlit.
+        </Text>
       </CardBody>
+
       <Divider />
       <CardFooter>
         <ButtonGroup spacing='2'>
-          <Button
-            disabled={playerHealth <= 0}
-            variant='solid'
-            colorScheme='blue'
-            onClick={handleClick}
-          >
-            Fight
+          <Button variant='solid' colorScheme='blue' onClick={onClickHandler}>
+            Rozmawiaj
           </Button>
           {/* <Button variant='ghost' colorScheme='blue'>
             Add to cart

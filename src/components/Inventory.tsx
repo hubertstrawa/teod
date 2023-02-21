@@ -24,6 +24,7 @@ import {
 import styles from './Inventory.module.css'
 import Cash from '../icons/Cash'
 import {
+  useGetCurrentPlayerQuery,
   useGetInventoryQuery,
   useUpdateInventoryMutation,
   useUpdateCurrentPlayerMutation,
@@ -45,6 +46,8 @@ const Inventory = ({ data }: any) => {
   ] = useUpdateInventoryMutation()
   const [updatePlayerDB, { isLoading: isLoadingPlayer, error: isErrorPlayer }] =
     useUpdateCurrentPlayerMutation()
+  const { data: playerData, refetch: refetchPlayerData } =
+    useGetCurrentPlayerQuery()
 
   const backpack = {
     name: 'Zwykły plecak',
@@ -112,7 +115,6 @@ const Inventory = ({ data }: any) => {
   useEffect(() => {
     if (inventoryDB) {
       const allItems = inventory.all.map((el, i) => {
-        // console.log('el', el, i)
         return {
           position: el.position,
           item: inventoryDB.all[i] ?? {},
@@ -127,169 +129,115 @@ const Inventory = ({ data }: any) => {
     }
   }, [inventoryDB])
 
-  const { onOpen, onClose, isOpen } = useDisclosure()
-
-  const addItemToInventory = (itemToAdd, unEquip = false) => {
+  const unEquip = (itemToUnequip: any) => {
     const emptyItemInInventory = inventory.all.find(
       (i) => Object.keys(i.item).length === 0
     )
 
     if (!!emptyItemInInventory) {
       const indexToUpdate = inventory.all.indexOf(emptyItemInInventory)
-      // console.log('INDEXTOUPDATE', indexToUpdate)
       const updatedInventory = inventory.all.map((item, i) => {
         return i !== indexToUpdate
           ? item
           : {
               position: item.position,
-              item: itemToAdd,
+              item: itemToUnequip,
             }
       })
-      const inventoryIds = updatedInventory
-        .map((el) => el.item.item_id)
-        .filter(Boolean)
+
+      const inventoryIds = updatedInventory.reduce((acc, current) => {
+        if (current.item._id) {
+          return [...acc, current.item._id]
+        }
+        return acc
+      }, [])
 
       updateInventoryDB({
-        itemToRemove: unEquip ? itemToAdd : null,
+        itemToRemove: itemToUnequip,
         allInventoryIds: inventoryIds,
       })
 
       setInventory({
         eq: {
           ...inventory.eq,
-          [itemToAdd.type]: null,
+          [itemToUnequip.type]: null,
         },
         all: updatedInventory,
       })
     }
   }
 
-  // console.log('inventory', inventory.all.length)
-
-  const unEquip = (item: any) => {
-    console.log('ITEMMM', item)
-    addItemToInventory(item, true)
-  }
-
   const equip = (item: any) => {
-    if (inventory.eq[item.item.type]) {
-      console.log('item in eq', inventory.eq[item.item.type])
-      const itemFromArgument = inventory.all.find(
-        (i) => i.position === item.position
-      )
-      console.log(
-        'ALL MAP',
-        inventory.all.map((el) => el.item.item_id).filter(Boolean)
-      )
+    const itemFromArgument = inventory.all.find(
+      (i) => i.position === item.position
+    )
 
-      const newItemIdsInventory = inventory.all.indexOf(
-        (el) => el.item_id === itemFromArgument.item_id
-      )
+    const inventoryAll = inventory.all.map((e, i) => {
+      return i === inventory.all.indexOf(itemFromArgument)
+        ? {
+            position: itemFromArgument.position,
+            item: inventory.eq[item.item.type] ?? {},
+          }
+        : e
+    })
 
-      // .map((el) => el.item.item_id)
-      // .filter(Boolean)
-
-      // updateInventoryDB({
-      //   item: itemFromArgument.item,
-      //   currentItem: inventory.eq[item.item.type],
-      //   allInventoryIds: newItemIdsInventory,
-      // })
-      console.log('inventory.eq', newItemIdsInventory)
-
-      const inventoryAll = inventory.all.map((e, i) => {
-        return i === inventory.all.indexOf(itemFromArgument)
-          ? {
-              position: itemFromArgument.position,
-              item: inventory.eq[item.item.type],
-            }
-          : e
-      })
-
-      const inventoryIds = inventoryAll
-        .map((el) => el.item.item_id)
-        .filter(Boolean)
-
-      setInventory({
-        all: inventoryAll,
-        eq: {
-          ...inventory.eq,
-          [item.item.type]: item.item,
-        },
-      })
-
-      updateInventoryDB({
-        item: itemFromArgument.item,
-        currentItem: inventory.eq[item.item.type],
-        allInventoryIds: inventoryIds,
-      })
-    } else if (item.item.type === 'eat') {
-      // handleConsumeFood(item.item, updatePlayerDB)
-      if (item.item.item_id === 3) {
-        updatePlayerDB({ health_points: 100, mana_points: 100, energy: 100 })
+    const inventoryIds = inventoryAll.reduce((acc, current) => {
+      if (current.item._id) {
+        return [...acc, current.item._id]
       }
-      // console.log('ITEM ITEM ITEM', item.item)
-      const indexItemToRemoveFromInv = inventory.all.find(
-        (e) => e.position === item.position
-      )
-      console.log('indexItemToRemoveFromInv', indexItemToRemoveFromInv)
+      return acc
+    }, [])
 
-      const inventoryAll = inventory.all.map((e, i) => {
-        return i === inventory.all.indexOf(indexItemToRemoveFromInv)
-          ? { position: indexItemToRemoveFromInv.position, item: {} }
-          : e
-      })
+    setInventory({
+      all: inventoryAll,
+      eq: {
+        ...inventory.eq,
+        [item.item.type]: item.item,
+      },
+    })
 
-      const inventoryIds = inventoryAll
-        .map((el) => el.item.item_id)
-        .filter(Boolean)
-
-      console.log('OOOOOOOOO inventoryIds OOOOOOO', inventoryIds)
-
-      console.log('OOOOOOOOO item.item OOOOOOO', item.item)
-      setInventory({
-        ...inventory,
-        all: inventoryAll,
-      })
-
-      updateInventoryDB({
-        allInventoryIds: inventoryIds,
-      })
-    } else {
-      const indexItemToRemoveFromInv = inventory.all.find(
-        (e) => e.position === item.position
-      )
-      console.log('indexItemToRemoveFromInv', indexItemToRemoveFromInv)
-
-      const inventoryAll = inventory.all.map((e, i) => {
-        return i === inventory.all.indexOf(indexItemToRemoveFromInv)
-          ? { position: indexItemToRemoveFromInv.position, item: {} }
-          : e
-      })
-
-      const inventoryIds = inventoryAll
-        .map((el) => el.item.item_id)
-        .filter(Boolean)
-
-      console.log('OOOOOOOOO item.item OOOOOOO', item.item)
-      setInventory({
-        all: inventoryAll,
-        eq: {
-          ...inventory.eq,
-          [item.item.type]: item.item,
-        },
-      })
-
-      updateInventoryDB({
-        item: item.item,
-        allInventoryIds: inventoryIds,
-      })
-    }
-    // console.log('equip item', item)
+    updateInventoryDB({
+      item: itemFromArgument.item,
+      allInventoryIds: inventoryIds,
+    })
   }
 
-  const handleEquipClick = (el) => {
-    equip(el)
-    onClose()
+  const eat = (item: any) => {
+    const indexItemToRemoveFromInv = inventory.all.find(
+      (e) => e.position === item.position
+    )
+
+    const inventoryAll = inventory.all.map((e, i) => {
+      return i === inventory.all.indexOf(indexItemToRemoveFromInv)
+        ? { position: indexItemToRemoveFromInv.position, item: {} }
+        : e
+    })
+
+    console.log('INVENTORY ALL', inventoryAll)
+
+    const inventoryIds = inventoryAll.reduce((acc, current) => {
+      if (current.item._id) {
+        return [...acc, current.item._id]
+      }
+      return acc
+    }, [])
+
+    setInventory({
+      ...inventory,
+      all: inventoryAll,
+    })
+
+    // @TODO UPDATE ON BE
+    updatePlayerDB({ healthPoints: 100, energy: 100, manaPoints: 100 })
+
+    // console.log('ITEM', item.item)
+
+    updateInventoryDB({
+      itemToConsume: item.item,
+      allInventoryIds: inventoryIds,
+    })
+
+    // refetchPlayerData()
   }
 
   return (
@@ -322,6 +270,7 @@ const Inventory = ({ data }: any) => {
             // border='1px solid blue'
           >
             {Object.keys(inventory.eq).map((el) => {
+              // console.log('INV EQ', inventory.eq)
               return inventory.eq[el] ? (
                 <GridItem
                   // area={'a-1'}
@@ -443,8 +392,8 @@ const Inventory = ({ data }: any) => {
               </strong>
             </Text>
           </GridItem>
-          {inventory.all.map((inv) => {
-            return Object.keys(inv.item).length > 0 ? (
+          {inventory.all.map((invItem) => {
+            return Object.keys(invItem.item).length > 0 ? (
               <GridItem border='2px solid #654321' width='60px' height='60px'>
                 <Popover>
                   <PopoverTrigger height='100%' width='100%' margin='0'>
@@ -459,8 +408,8 @@ const Inventory = ({ data }: any) => {
                     >
                       <img
                         // style={{ width: '100%', height: '100%' }}
-                        src={inv.item.image}
-                        alt={inv.item.name}
+                        src={invItem.item.image}
+                        alt={invItem.item.name}
                       />
                     </div>
                   </PopoverTrigger>
@@ -468,35 +417,33 @@ const Inventory = ({ data }: any) => {
                     <PopoverArrow />
                     <PopoverCloseButton />
                     <PopoverHeader fontSize='medium'>
-                      {inv.item.name}
-                      {inv.item.type !== 'eat' && (
+                      {invItem.item.name}
+                      {invItem.item.type !== 'eat' && (
                         <Text fontSize='small' fontWeight='bold'>
-                          (atk: {inv.item.attack} {','} def: {inv.item.defense}{' '}
-                          )
+                          (atk: {invItem.item.attack} {','} def:{' '}
+                          {invItem.item.defense} )
                         </Text>
                       )}
                     </PopoverHeader>
                     <PopoverBody>
                       <Text mb={2} fontSize='small'>
-                        {inv.item.description}
+                        {invItem.item.description}
                       </Text>
                       {/* check if item can be equipped */}
-                      {Object.keys(inventory.eq).includes(inv.item.type) && (
+                      {Object.keys(inventory.eq).includes(
+                        invItem.item.type
+                      ) && (
                         <Flex justifyContent={'space-between'}>
-                          <Button onClick={() => handleEquipClick(inv)}>
-                            Zaloz
-                          </Button>
+                          <Button onClick={() => equip(invItem)}>Zaloz</Button>
                           <Flex alignItems={'center'}>
                             <Text>100</Text>
                             <Cash style={{ marginLeft: '3px' }} />
                           </Flex>
                         </Flex>
                       )}
-                      {inv.item.type === 'eat' && (
+                      {invItem.item.type === 'eat' && (
                         <Flex justifyContent={'space-between'}>
-                          <Button onClick={() => handleEquipClick(inv)}>
-                            Uzyj
-                          </Button>
+                          <Button onClick={() => eat(invItem)}>Uzyj</Button>
                           <Flex alignItems={'center'}>
                             <Text>100</Text>
                             <Cash style={{ marginLeft: '3px' }} />

@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalHeader,
+  useToast,
   Progress,
   ModalContent,
   Heading,
@@ -18,13 +19,16 @@ import {
   keyframes,
   Container,
 } from '@chakra-ui/react'
+import getLootFromEnemy from '../utils/getLootFromEnemy'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import HeartIcon from '../icons/HeartIcon'
 import Weapon from '../icons/Weapon'
 import {
   useGetCurrentPlayerQuery,
+  useGetInventoryQuery,
   useUpdateCurrentPlayerMutation,
+  useAddToInventoryMutation,
 } from '../features/player/playerApiSlice'
 
 import { useEffect, useState } from 'react'
@@ -49,11 +53,11 @@ const BattleEnemy = ({
   playerAttackValue,
   playerAttack,
 }: any) => {
-  console.log('healthPoints', healthPoints)
-  console.log('maxHealthPoints', maxHealthPoints)
+  // console.log('healthPoints', healthPoints)
+  // console.log('maxHealthPoints', maxHealthPoints)
 
   const healthPercent = (100 * healthPoints) / maxHealthPoints
-  console.log('healthPercent', healthPercent)
+  // console.log('healthPercent', healthPercent)
 
   // console.log('health%%', healthPercent)
   // console.log('healthPoints', healthPoints)
@@ -192,11 +196,30 @@ const Battle = ({
   const [player, setPlayer] = useState(playerData)
   const [updatePlayer, { isLoading: isLoad, error }] =
     useUpdateCurrentPlayerMutation()
+  const [addToInventory, { data: itemLootedData }] = useAddToInventoryMutation()
+  const { data: inventoryData } = useGetInventoryQuery()
+  // const eqPlayerAttack = inventoryData
+  //   ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
+  //       return inventoryData.eq[curr]?.attack
+  //         ? acc + inventoryData.eq[curr].attack
+  //         : acc
+  //     }, 0)
+  //   : 0
+  const eqPlayerAttack = 50
+  const eqPlayerDefense = inventoryData
+    ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
+        return inventoryData.eq[curr]?.defense
+          ? acc + inventoryData.eq[curr].defense
+          : acc
+      }, 0)
+    : 0
+  console.log('INVENTORYYYY', eqPlayerAttack)
+  console.log('INVENTORYYYY', eqPlayerDefense)
+
   console.log('PLAYERRRR', player)
   const {
-    player_name,
-    health_points,
-    mana_points,
+    healthPoints,
+    manaPoints,
     power,
     experience,
     avatar,
@@ -204,7 +227,7 @@ const Battle = ({
     energy,
     level,
     money,
-    max_health_points,
+    maxHealthPoints,
   } = player
 
   const [turn, setTurn] = useState(1)
@@ -218,7 +241,13 @@ const Battle = ({
     isBattleOver: false,
     didPlayerWin: false,
   })
+  const [playerProgress, setPlayerProgress] = useState({
+    expEarned: 0,
+    goldEarned: 0,
+    itemLooted: null,
+  })
   console.log('CURRENT ENEMY', currentEnemy)
+  const toast = useToast()
 
   useEffect(() => {
     // console.log('isPlayerTurn', isPlayerTurn)
@@ -237,15 +266,15 @@ const Battle = ({
       return
     }
 
-    if (isPlayerTurn) {
-      setTimeout(() => {
-        setBattleStatus({
-          ...battleStatus,
-          enemyAttackValue: 0,
-        })
-      }, 600)
-      return
-    }
+    // if (isPlayerTurn) {
+    //   setTimeout(() => {
+    //     setBattleStatus({
+    //       ...battleStatus,
+    //       enemyAttackValue: 0,
+    //     })
+    //   }, 600)
+    //   return
+    // }
 
     if (!isPlayerTurn) {
       // console.log('currentENEM', currentEnemy)
@@ -256,7 +285,7 @@ const Battle = ({
           currentEnemy.power + 3
         )
 
-        const lastHit = enemyHitValue > health_points
+        const lastHit = enemyHitValue > healthPoints
         if (lastHit) {
           setBattleStatus({
             ...battleStatus,
@@ -273,7 +302,7 @@ const Battle = ({
         }
         setPlayer({
           ...player,
-          health_points: lastHit ? 0 : health_points - enemyHitValue,
+          healthPoints: lastHit ? 0 : healthPoints - enemyHitValue,
         })
         setTurn(turn + 1)
       }, 1200)
@@ -281,18 +310,47 @@ const Battle = ({
   }, [turn])
 
   useEffect(() => {
-    if (battleStatus.isBattleOver) {
+    if (battleStatus.isBattleOver && battleStatus.didPlayerWin) {
       // const newExp = 10;
       // console.log(level * 100)
       const expNeededForLevel = level * (level + 1) * 100
-      console.log('expNeededForLevel', expNeededForLevel)
-      updatePlayer({
-        health_points,
-        mana_points,
-        energy: energy - 5,
-        experience: experience + 10,
-        money: money + 10,
-      })
+      // console.log('expNeededForLevel', expNeededForLevel)
+      const goldEarned = randomIntFromInterval(2, currentEnemy.maxMoney)
+      const expEarned = currentEnemy.experience
+      setPlayerProgress({ ...playerProgress, expEarned, goldEarned })
+      console.log('LOOT', currentEnemy.loot)
+      const itemLooted = getLootFromEnemy(currentEnemy.loot)
+      console.log('LOOTED', itemLooted)
+      if (itemLooted.id !== 0) {
+        addToInventory(itemLooted.id)
+      }
+
+      // console.log('=======  ITEM LOOTED DATA =========', itemLootedData)
+
+      if (expNeededForLevel <= experience + currentEnemy.experience) {
+        toast({
+          title: `Gratulacje! Osiągnięto level ${level + 1}`,
+          position: 'top',
+          variant: 'top-accent',
+          isClosable: true,
+        })
+        updatePlayer({
+          level: level + 1,
+          healthPoints,
+          manaPoints,
+          energy: energy - 5,
+          experience: experience + currentEnemy.experience,
+          money: money + goldEarned,
+        })
+      } else {
+        updatePlayer({
+          healthPoints,
+          manaPoints,
+          energy: energy - 5,
+          experience: experience + currentEnemy.experience,
+          money: money + goldEarned,
+        })
+      }
     }
   }, [battleStatus.isBattleOver])
 
@@ -310,7 +368,10 @@ const Battle = ({
 
   const playerAttack = (attackType: string) => {
     if (attackType === AttackType.NORMAL) {
-      const playerHitValue = randomIntFromInterval(power - 3, power + 3)
+      const playerHitValue = randomIntFromInterval(
+        eqPlayerAttack + level - 3,
+        eqPlayerAttack + level + 3
+      )
       // console.log('PLAYER HIT VALUE', playerHitValue)
       setBattleStatus({
         ...battleStatus,
@@ -318,6 +379,7 @@ const Battle = ({
         playerAttackValue: playerHitValue,
       })
       const lastHit = playerHitValue > currentEnemy.health_points
+
       if (lastHit || currentEnemy.health_points === 0) {
         setBattleStatus({
           ...battleStatus,
@@ -325,7 +387,6 @@ const Battle = ({
           didPlayerWin: true,
         })
       }
-
       setCurrentEnemy((prev: any) => {
         return {
           ...prev,
@@ -341,7 +402,7 @@ const Battle = ({
       // console.log('isEffective', isEffective)
       // console.log('isResistant', isResistant)
 
-      let [min, max] = [power - 3, power + 3]
+      let [min, max] = [eqPlayerAttack + level - 3, eqPlayerAttack + level + 3]
       if (isResistant) {
         min = min / 2
         max = max / 2
@@ -366,7 +427,7 @@ const Battle = ({
       }
       setPlayer({
         ...player,
-        mana_points: mana_points - 5,
+        manaPoints: manaPoints - 5,
       })
       setCurrentEnemy((prev: any) => {
         return {
@@ -400,7 +461,7 @@ const Battle = ({
     },
   }
 
-  console.log('CURRENT ENEMY', currentEnemy)
+  // console.log('CURRENT ENEMY', currentEnemy)
 
   return (
     <Modal
@@ -433,7 +494,7 @@ const Battle = ({
                 {currentEnemy.health_points}{' '}
                 <HeartIcon style={{ marginLeft: '5px' }} />
                 {/* <span style={{ margin: '0 5px' }}>|</span>
-                {mana_points} <ManaIcon style={{ marginLeft: '5px' }} /> */}
+                {manaPoints} <ManaIcon style={{ marginLeft: '5px' }} /> */}
               </Text>
             </Text>
           </Box>
@@ -482,21 +543,67 @@ const Battle = ({
                 as={motion.div}
                 variants={container}
                 initial='hidden'
+                paddingTop={5}
+                // display='flex'
+                // justifyContent={'center'}
+                // alignItems='center'
+                flexDir='column'
                 textAlign={'center'}
                 animate='visible'
               >
-                <Heading>
-                  {battleStatus.didPlayerWin ? 'WYGRANA' : 'PRZEGRANA'}
-                </Heading>
-                <Text as={motion.p} variants={item}>
-                  Zdobyto:
-                </Text>
-                <Text as={motion.p} variants={item}>
-                  X XP 🎮
-                </Text>
-                <Text as={motion.p} variants={item}>
-                  10 $ 💰
-                </Text>
+                <Box
+                  bgImage={'/images/scroll-bg.svg'}
+                  bgSize={'contain'}
+                  bgPos={'center'}
+                  bgRepeat='no-repeat'
+                  minHeight={250}
+                  display='flex'
+                  flexDir={'column'}
+                  justifyContent='center'
+                  alignItems='center'
+                  color='gray.800'
+                >
+                  <Heading color='green'>
+                    {battleStatus.didPlayerWin ? 'WYGRANA' : 'PRZEGRANA'}
+                  </Heading>
+                  <Box
+                    display={'flex'}
+                    width='150px'
+                    justifyContent={'space-between'}
+                  >
+                    <Text as={motion.p} variants={item}>
+                      +{playerProgress.expEarned} EXP
+                    </Text>
+                    <Text as={motion.p} variants={item}>
+                      +{playerProgress.goldEarned} $ 💰
+                    </Text>
+                  </Box>
+                  {/* <Text as={motion.p} variants={item}>
+                    Zdobyto:
+                  </Text> */}
+
+                  {!!itemLootedData?.data && (
+                    <Box
+                      as={motion.div}
+                      mt={5}
+                      display={'flex'}
+                      alignItems={'center'}
+                      variants={item}
+                    >
+                      <Text>
+                        Zdobyto <strong>{itemLootedData.data.name} </strong>
+                      </Text>
+                      <img
+                        style={{
+                          marginLeft: '5px',
+                          width: '20px',
+                          height: '20px',
+                        }}
+                        src={itemLootedData.data.image}
+                      />
+                    </Box>
+                  )}
+                </Box>
               </Container>
             )}
 
@@ -524,8 +631,8 @@ const Battle = ({
               </GridItem>
               <GridItem area={'d-3'}>
                 <Player
-                  healthPoints={health_points}
-                  maxHealthPoints={max_health_points}
+                  healthPoints={healthPoints}
+                  maxHealthPoints={maxHealthPoints}
                   enemyAttackValue={battleStatus.enemyAttackValue}
                 />
               </GridItem>

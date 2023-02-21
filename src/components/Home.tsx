@@ -14,6 +14,7 @@ import {
   Grid,
   useDisclosure,
 } from '@chakra-ui/react'
+import Dialogue from './Dialogue'
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -23,10 +24,17 @@ import {
 import woodenBg from 'images/woodenbg.png'
 import Enemy from './Enemy'
 import PlayerBadge from './PlayerBadge'
+import CharacterNPC from './CharacterNPC'
 
 const Home = () => {
   const [enemy, setEnemy] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenDialogue,
+    onOpen: onOpenDialogue,
+    onClose: onCloseDialogue,
+  } = useDisclosure()
+
   const { data, isLoading } = useGetCurrentPlayerQuery()
 
   console.log('DATA', data)
@@ -34,6 +42,10 @@ const Home = () => {
   const handleFight = (enemy: any) => {
     setEnemy(enemy)
     onOpen()
+  }
+
+  const handleTalk = (npc: any) => {
+    onOpenDialogue()
   }
 
   if (isLoading) return <h1>LOADING</h1>
@@ -66,19 +78,34 @@ const Home = () => {
         //   background:
         //     'url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/rip.svg) bottom',
         //   backgroundSsize: '150%',
+
+        //MOONLIT KINGDOM
         // }}
       >
         <PlayerBadge player={data} />
-        <Flex gap={10}>
+        <Flex mt={'auto'} gap={10}>
+          <CharacterNPC
+            talk={handleTalk}
+            name='Wildheart'
+            level={10}
+            image={'/images/shaman.png'}
+          />
           <Enemy
             fight={handleFight}
+            experience={40}
+            maxMoney={12}
+            loot={[
+              { id: 0, chance: 30 },
+              { id: '63e96737ecbb4c981ca98882', chance: 70 },
+            ]}
             name='Ice Wolf'
             health_points={50}
             max_health_points={50}
             level={2}
             power={6}
             image={'images/wolf.png'}
-            type='ice'
+            type='normal'
+            damage={33}
           />
           <Enemy
             fight={handleFight}
@@ -100,7 +127,7 @@ const Home = () => {
             image={'images/dragon.png'}
             type='fire'
           />
-          <Enemy
+          {/* <Enemy
             fight={handleFight}
             name='Little Demon'
             health_points={200}
@@ -109,7 +136,7 @@ const Home = () => {
             power={50}
             image={'images/dragon.png'}
             type='fire'
-          />
+          /> */}
         </Flex>
       </Grid>
       {isOpen && enemy && (
@@ -118,6 +145,12 @@ const Home = () => {
           playerData={data?.data}
           enemyData={enemy}
           onClose={onClose}
+        />
+      )}
+      {true && (
+        <Dialogue
+          isDialogueOpen={isOpenDialogue}
+          onDialogueClose={onCloseDialogue}
         />
       )}
 

@@ -6,9 +6,9 @@ export interface PlayerState {
   experience: number
   level: number
   player_name: string
-  max_health_points: number
-  health_points: number
-  mana_points: number
+  maxHealthPoints: number
+  healthPoints: number
+  manaPoints: number
   energy: number
   criticalChance: number
   race: string
@@ -41,9 +41,9 @@ const initialState: PlayerState = {
   experience: 0,
   level: 1,
   player_name: 'Vinyljam',
-  health_points: 100,
-  max_health_points: 150,
-  mana_points: 100,
+  healthPoints: 100,
+  maxHealthPoints: 150,
+  manaPoints: 100,
   energy: 100,
   criticalChance: 50,
   race: 'mage',

@@ -20,6 +20,14 @@ export const playerApiSlice = apiSlice.injectEndpoints({
       query: () => `/auth/me-inventory`,
       providesTags: ['Inventory'],
     }),
+    addToInventory: builder.mutation<number, any>({
+      query: (data) => ({
+        url: `/auth/add-to-inventory`,
+        method: 'POST',
+        body: { lootedItemId: data },
+      }),
+      invalidatesTags: ['Inventory'],
+    }),
     updateInventory: builder.mutation<any, any>({
       query: (data) => ({
         url: `/auth/updateMe-inventory`,
@@ -34,6 +42,7 @@ export const playerApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetCurrentPlayerQuery,
   useUpdateCurrentPlayerMutation,
+  useAddToInventoryMutation,
   useGetInventoryQuery,
   useUpdateInventoryMutation,
 } = playerApiSlice

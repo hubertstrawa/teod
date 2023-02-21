@@ -49,9 +49,11 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: FiHome, url: '/game' },
   { name: 'Ekwipunek', icon: FiShoppingBag, url: '/game/equipment' },
   { name: 'Eksploracja', icon: FiCompass, url: '/game' },
+  { name: 'Zadania', icon: FiCompass, url: '/game/quests' },
   { name: 'Fragmenty', icon: FiMap },
   { name: 'Praca', icon: FiClock },
   { name: 'Chat', icon: FiStar },
+
   // { name: 'Wyloguj', icon: FiCornerLeftDown },
 ]
 
