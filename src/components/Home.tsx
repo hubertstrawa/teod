@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import Battle from './Battle'
+import Battle from './Battle/Battle'
 import wolfSrc from 'images/wolf.png'
 import dragonSrc from 'images/dragon.png'
 import {
@@ -102,7 +102,7 @@ const Home = () => {
             health_points={50}
             max_health_points={50}
             level={2}
-            power={6}
+            power={10}
             image={'images/wolf.png'}
             type='normal'
             damage={33}

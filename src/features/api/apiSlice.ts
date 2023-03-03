@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { setCredentials } from '../auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://146.59.32.193:3003/api/v1',
+  baseUrl: 'https://api.teod.pl/api/v1',
   credentials: 'include',
   // mode: 'no-cors',
   prepareHeaders: (headers, { getState }: any) => {

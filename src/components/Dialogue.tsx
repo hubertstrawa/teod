@@ -46,7 +46,7 @@ const Dialogue = ({ isDialogueOpen, onDialogueClose }) => {
               />
             </Box>
             <Box width='50%'>
-              <Text>Test</Text>
+              <Text>Zdobądź 3x surowe mięso</Text>
             </Box>
           </Flex>
           {/* <Box

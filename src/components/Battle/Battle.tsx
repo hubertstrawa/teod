@@ -19,146 +19,24 @@ import {
   keyframes,
   Container,
 } from '@chakra-ui/react'
-import getLootFromEnemy from '../utils/getLootFromEnemy'
+import getLootFromEnemy from '../../utils/getLootFromEnemy'
 import { motion, AnimatePresence } from 'framer-motion'
 
-import HeartIcon from '../icons/HeartIcon'
-import Weapon from '../icons/Weapon'
+import HeartIcon from '../../icons/HeartIcon'
+
 import {
   useGetCurrentPlayerQuery,
   useGetInventoryQuery,
   useUpdateCurrentPlayerMutation,
   useAddToInventoryMutation,
-} from '../features/player/playerApiSlice'
+} from '../../features/player/playerApiSlice'
 
 import { useEffect, useState } from 'react'
-import AttackNormal from '../icons/AttackNormal'
-import AttackFire from '../icons/AttackFire'
-import background from '../assets/background22.png'
-// import wolfTexture from '../assets/wolf-no-bg.png'
 
-import playerTexture from '../assets/warrior-no-bg.png'
-// import { setPlayer } from '../features/player/playerSlice'
-import { RootState } from '../store'
+import PlayerCharacter from './PlayerCharacter'
+import BattleCharacter from './BattleCharacter'
+import getRandomIntMinMax from '../../utils/getRandomIntMinMax'
 import { useSelector, useDispatch } from 'react-redux'
-
-function randomIntFromInterval(min: number, max: number) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-const BattleEnemy = ({
-  healthPoints,
-  maxHealthPoints,
-  playerAttackValue,
-  playerAttack,
-}: any) => {
-  // console.log('healthPoints', healthPoints)
-  // console.log('maxHealthPoints', maxHealthPoints)
-
-  const healthPercent = (100 * healthPoints) / maxHealthPoints
-  // console.log('healthPercent', healthPercent)
-
-  // console.log('health%%', healthPercent)
-  // console.log('healthPoints', healthPoints)
-  // console.log('maxHealthPoints', maxHealthPoints)
-
-  // let icon
-  // console.log('platttack', playerAttack)
-  // switch (playerAttack) {
-  //   case playerAttack === AttackType.NORMAL:
-  //     icon = <AttackNormal />
-  //     break
-  //   case playerAttack === AttackType.FIRE:
-  //     icon = <AttackFire />
-  //     break
-  //   default:
-  //     icon = 'HP'
-  // }
-
-  return (
-    <Box position={'relative'}>
-      <AnimatePresence>
-        {playerAttackValue !== 0 && (
-          <Text
-            as={motion.p}
-            margin={'auto'}
-            textAlign={'center'}
-            top={-8}
-            initial={{ left: 0 }}
-            animate={{ left: 25, scale: 1.3, opacity: 1 }}
-            exit={{ left: 0, scale: 0, opacity: 0 }}
-            position={'absolute'}
-            color={'red'}
-            display={'flex'}
-          >
-            - {playerAttackValue}
-            {playerAttack === AttackType.NORMAL && <AttackNormal />}
-            {playerAttack === AttackType.FIRE && <AttackFire />}
-          </Text>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {healthPoints > 0 && (
-          <Box
-            as={motion.div}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Progress colorScheme='green' size={'sm'} value={healthPercent} />
-            <Image width='100px' height='100px' src={'images/wolf-no-bg.png'} />
-          </Box>
-        )}
-      </AnimatePresence>
-    </Box>
-  )
-}
-
-const Player = ({ healthPoints, maxHealthPoints, enemyAttackValue }: any) => {
-  const healthPercent = (100 * healthPoints) / maxHealthPoints
-  return (
-    <Box position={'relative'}>
-      <AnimatePresence>
-        {enemyAttackValue !== 0 && (
-          <Text
-            as={motion.p}
-            margin={'auto'}
-            textAlign={'center'}
-            top={-8}
-            initial={{ left: 0 }}
-            animate={{ left: 25, scale: 1.3, opacity: 1 }}
-            exit={{ left: 0, scale: 0, opacity: 0 }}
-            position={'absolute'}
-            color={'red'}
-          >
-            - {enemyAttackValue} HP
-          </Text>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {healthPoints > 0 && (
-          <Box
-            as={motion.div}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Progress colorScheme='green' size={'sm'} value={healthPercent} />
-            <Image
-              width='100px'
-              height='100px'
-              src={'images/warrior-no-bg.png'}
-            />
-          </Box>
-        )}
-      </AnimatePresence>
-      {/* <Progress colorScheme='green' size={'sm'} value={healthPercent} />
-
-      <Image width='100px' height='100px' src={playerTexture} /> */}
-    </Box>
-  )
-}
 
 interface BattleProps {
   isBattleOpen: boolean
@@ -167,7 +45,7 @@ interface BattleProps {
   playerData: any
 }
 
-const enum AttackType {
+export const enum AttackType {
   NORMAL = 'normal',
   FIRE = 'fire',
   ICE = 'ice',
@@ -181,16 +59,6 @@ const Battle = ({
   onClose,
   enemyData,
 }: BattleProps) => {
-  // const { onOpen, onClose } = useDisclosure()
-
-  // let {
-  //   healthPoints: enemyHp,
-  //   power: enemyPower,
-  //   name: enemyName,
-  //   level: enemyLevel,
-  // } = enemyData
-  // const { data, isLoading } = useGetCurrentPlayerQuery()
-  // console.log('daata', data)
   const dispatch = useDispatch()
   const [currentEnemy, setCurrentEnemy] = useState(enemyData)
   const [player, setPlayer] = useState(playerData)
@@ -198,14 +66,14 @@ const Battle = ({
     useUpdateCurrentPlayerMutation()
   const [addToInventory, { data: itemLootedData }] = useAddToInventoryMutation()
   const { data: inventoryData } = useGetInventoryQuery()
-  // const eqPlayerAttack = inventoryData
-  //   ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
-  //       return inventoryData.eq[curr]?.attack
-  //         ? acc + inventoryData.eq[curr].attack
-  //         : acc
-  //     }, 0)
-  //   : 0
-  const eqPlayerAttack = 50
+  const eqPlayerAttack = inventoryData
+    ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
+        return inventoryData.eq[curr]?.attack
+          ? acc + inventoryData.eq[curr].attack
+          : acc
+      }, 0)
+    : 0
+  // const eqPlayerAttack = 10
   const eqPlayerDefense = inventoryData
     ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
         return inventoryData.eq[curr]?.defense
@@ -280,10 +148,12 @@ const Battle = ({
       // console.log('currentENEM', currentEnemy)
 
       setTimeout(() => {
-        const enemyHitValue = randomIntFromInterval(
-          currentEnemy.power - 3,
-          currentEnemy.power + 3
+        let enemyHitValue = getRandomIntMinMax(
+          currentEnemy.power - eqPlayerDefense - 3,
+          currentEnemy.power - eqPlayerDefense + 3
         )
+
+        if (enemyHitValue < 0) enemyHitValue = 0
 
         const lastHit = enemyHitValue > healthPoints
         if (lastHit) {
@@ -315,7 +185,7 @@ const Battle = ({
       // console.log(level * 100)
       const expNeededForLevel = level * (level + 1) * 100
       // console.log('expNeededForLevel', expNeededForLevel)
-      const goldEarned = randomIntFromInterval(2, currentEnemy.maxMoney)
+      const goldEarned = getRandomIntMinMax(2, currentEnemy.maxMoney)
       const expEarned = currentEnemy.experience
       setPlayerProgress({ ...playerProgress, expEarned, goldEarned })
       console.log('LOOT', currentEnemy.loot)
@@ -354,21 +224,9 @@ const Battle = ({
     }
   }, [battleStatus.isBattleOver])
 
-  const animationKeyframes = keyframes`
-  0% { transform: scale(0.1) rotate(0); border-radius: 20%; }
-  25% { transform: scale(1.5) rotate(0); border-radius: 20%; }
-  50% { transform: scale(1.5) rotate(270deg); border-radius: 50%; }
-  75% { transform: scale(1) rotate(270deg); border-radius: 50%; }
-  95% { transform: scale(1) rotate(0); border-radius: 20%; }
-  100% { transform: scale(0.1) rotate(0); border-radius: 20%; }
-
-`
-
-  const animation = `${animationKeyframes} 2s ease-in-out`
-
   const playerAttack = (attackType: string) => {
     if (attackType === AttackType.NORMAL) {
-      const playerHitValue = randomIntFromInterval(
+      const playerHitValue = getRandomIntMinMax(
         eqPlayerAttack + level - 3,
         eqPlayerAttack + level + 3
       )
@@ -411,7 +269,7 @@ const Battle = ({
         min = min * 2
         max = max * 2
       }
-      const playerHitValue = randomIntFromInterval(min, max)
+      const playerHitValue = getRandomIntMinMax(min, max)
       setBattleStatus({
         ...battleStatus,
         playerAttack: AttackType.FIRE,
@@ -622,7 +480,7 @@ const Battle = ({
               fontWeight='bold'
             >
               <GridItem area={'c-1'}>
-                <BattleEnemy
+                <BattleCharacter
                   healthPoints={currentEnemy.health_points}
                   maxHealthPoints={currentEnemy.max_health_points}
                   playerAttack={battleStatus.playerAttack}
@@ -630,7 +488,7 @@ const Battle = ({
                 />
               </GridItem>
               <GridItem area={'d-3'}>
-                <Player
+                <PlayerCharacter
                   healthPoints={healthPoints}
                   maxHealthPoints={maxHealthPoints}
                   enemyAttackValue={battleStatus.enemyAttackValue}
@@ -638,7 +496,6 @@ const Battle = ({
               </GridItem>
             </Grid>
           </Box>
-          {/* <BattleEnemy /> */}
           <Box bottom={5} left={5} position='absolute'>
             <Button
               isDisabled={battleStatus.isBattleOver || !isPlayerTurn}
