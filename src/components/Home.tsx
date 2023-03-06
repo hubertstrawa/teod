@@ -82,7 +82,7 @@ const Home = () => {
         //MOONLIT KINGDOM
         // }}
       >
-        <PlayerBadge player={data} />
+        <PlayerBadge />
         <Flex mt={'auto'} gap={10}>
           <CharacterNPC
             talk={handleTalk}
@@ -99,8 +99,8 @@ const Home = () => {
               { id: '63e96737ecbb4c981ca98882', chance: 70 },
             ]}
             name='Ice Wolf'
-            health_points={50}
-            max_health_points={50}
+            health_points={20}
+            max_health_points={20}
             level={2}
             power={10}
             image={'images/wolf.png'}
@@ -110,8 +110,14 @@ const Home = () => {
           <Enemy
             fight={handleFight}
             name='Super Wolf'
+            experience={50}
             health_points={80}
+            maxMoney={15}
             max_health_points={80}
+            loot={[
+              { id: 0, chance: 30 },
+              { id: '63e96737ecbb4c981ca98882', chance: 70 },
+            ]}
             level={3}
             power={10}
             image={'images/wolf.png'}
@@ -120,12 +126,18 @@ const Home = () => {
           <Enemy
             fight={handleFight}
             name='Weirdo'
+            experience={60}
+            maxMoney={30}
             health_points={100}
             max_health_points={100}
             level={3}
-            power={10}
+            power={15}
             image={'images/dragon.png'}
             type='fire'
+            loot={[
+              { id: 0, chance: 30 },
+              { id: '63e96737ecbb4c981ca98882', chance: 70 },
+            ]}
           />
           {/* <Enemy
             fight={handleFight}

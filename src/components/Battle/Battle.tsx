@@ -19,6 +19,7 @@ import {
   keyframes,
   Container,
 } from '@chakra-ui/react'
+import { useMemo } from 'react'
 import getLootFromEnemy from '../../utils/getLootFromEnemy'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -26,10 +27,12 @@ import HeartIcon from '../../icons/HeartIcon'
 
 import {
   useGetCurrentPlayerQuery,
-  useGetInventoryQuery,
   useUpdateCurrentPlayerMutation,
-  useAddToInventoryMutation,
 } from '../../features/player/playerApiSlice'
+import {
+  useGetInventoryQuery,
+  useAddToInventoryMutation,
+} from '../../features/inventory/inventoryApiSlice'
 
 import { useEffect, useState } from 'react'
 
@@ -66,13 +69,25 @@ const Battle = ({
     useUpdateCurrentPlayerMutation()
   const [addToInventory, { data: itemLootedData }] = useAddToInventoryMutation()
   const { data: inventoryData } = useGetInventoryQuery()
-  const eqPlayerAttack = inventoryData
-    ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
+  const eqPlayerAttack = useMemo(() => {
+    if (inventoryData) {
+      return Object.keys(inventoryData.eq).reduce((acc, curr) => {
         return inventoryData.eq[curr]?.attack
           ? acc + inventoryData.eq[curr].attack
           : acc
-      }, 0)
-    : 0
+      }, 5)
+    }
+  }, [inventoryData])
+
+  // inventoryData
+  //   ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
+  //       return inventoryData.eq[curr]?.attack
+  //         ? acc + inventoryData.eq[curr].attack
+  //         : acc
+  //     }, 0)
+  //   : 5
+
+  console.log('eqPlayerAttack', eqPlayerAttack)
   // const eqPlayerAttack = 10
   const eqPlayerDefense = inventoryData
     ? Object.keys(inventoryData.eq).reduce((acc, curr) => {
@@ -222,6 +237,13 @@ const Battle = ({
         })
       }
     }
+    if (battleStatus.isBattleOver && !battleStatus.didPlayerWin) {
+      updatePlayer({
+        healthPoints,
+        manaPoints,
+        energy: energy - 5,
+      })
+    }
   }, [battleStatus.isBattleOver])
 
   const playerAttack = (attackType: string) => {
@@ -230,6 +252,18 @@ const Battle = ({
         eqPlayerAttack + level - 3,
         eqPlayerAttack + level + 3
       )
+      console.log('playerHitValue', playerHitValue)
+      console.log('eqPlayerAttack + level - 3', eqPlayerAttack + level - 3)
+      console.log('eqPlayerAttack + level +3', eqPlayerAttack + level + 3)
+
+      console.log(
+        'getRandomIntMinMax',
+        getRandomIntMinMax(
+          eqPlayerAttack + level - 3,
+          eqPlayerAttack + level + 3
+        )
+      )
+
       // console.log('PLAYER HIT VALUE', playerHitValue)
       setBattleStatus({
         ...battleStatus,
@@ -476,6 +510,7 @@ const Battle = ({
               gap='1'
               padding={4}
               // minH={'lg'}
+              maxH={'xl'}
               color='blackAlpha.700'
               fontWeight='bold'
             >

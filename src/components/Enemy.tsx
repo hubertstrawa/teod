@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
+import { useGetCurrentPlayerQuery } from '../features/player/playerApiSlice'
 
 const Enemy = ({
   fight,
@@ -27,9 +28,8 @@ const Enemy = ({
   loot,
   type,
 }: any) => {
-  const playerHealth = useSelector(
-    (state: RootState) => state.player.healthPoints
-  )
+  const { data: player } = useGetCurrentPlayerQuery()
+
   const handleClick = () => {
     fight({
       name,
@@ -64,7 +64,7 @@ const Enemy = ({
       <CardFooter>
         <ButtonGroup spacing='2'>
           <Button
-            disabled={playerHealth <= 0}
+            disabled={player.healthPoints <= 0}
             variant='solid'
             colorScheme='blue'
             onClick={handleClick}

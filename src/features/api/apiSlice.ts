@@ -3,9 +3,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { setCredentials } from '../auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://api.teod.pl/api/v1',
+  baseUrl: 'http://localhost:3003/api/v1',
   credentials: 'include',
-  // mode: 'no-cors',
   prepareHeaders: (headers, { getState }: any) => {
     const token = getState().auth.token
 
@@ -53,22 +52,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  // baseQuery: baseQueryWithReauth,
   baseQuery: baseQueryWithReauth,
-  // baseQuery: fetchBaseQuery({
-  //   baseUrl: 'http://localhost:3002/api/v1',
-  //   prepareHeaders: (headers, { getState }: any) => {
-  //     const token = getState().auth.token || localStorage.getItem('token')
+  // tagTypes: ['Player, Inventory'],
+  tagTypes: ['Player', 'Inventory'],
 
-  //     if (token) {
-  //       headers.set('authorization', `Bearer ${token}`)
-  //     }
-
-  //     return headers
-  //   },
-  // }),
-  tagTypes: ['Player, Inventory'],
   endpoints: () => ({}),
 })
-
-// export const { useGetTestQuery } = apiSlice

@@ -23,12 +23,15 @@ import {
 } from '@chakra-ui/react'
 import styles from './Inventory.module.css'
 import Cash from '../icons/Cash'
+// import {
+//   useGetCurrentPlayerQuery,
+//   useUpdateCurrentPlayerMutation,
+// } from '../features/player/playerApiSlice'
 import {
-  useGetCurrentPlayerQuery,
   useGetInventoryQuery,
   useUpdateInventoryMutation,
-  useUpdateCurrentPlayerMutation,
-} from '../features/player/playerApiSlice'
+  useEatItemInventoryMutation,
+} from '../features/inventory/inventoryApiSlice'
 import { useEffect, useState } from 'react'
 import Statistics from './Statistics'
 
@@ -38,58 +41,8 @@ const handleConsumeFood = (item: any, updatePlayerFn: () => void) => {
   }
 }
 
-const Inventory = ({ data }: any) => {
-  const { refetch, isLoading, data: inventoryDB } = useGetInventoryQuery()
-  const [
-    updateInventoryDB,
-    { isLoading: isLoadingInventory, error: isErrorInventory },
-  ] = useUpdateInventoryMutation()
-  const [updatePlayerDB, { isLoading: isLoadingPlayer, error: isErrorPlayer }] =
-    useUpdateCurrentPlayerMutation()
-  const { data: playerData, refetch: refetchPlayerData } =
-    useGetCurrentPlayerQuery()
-
-  const backpack = {
-    name: 'Zwykły plecak',
-    type: 'bag',
-    image: '/items/BAGS/BAG 1.png',
-    stats: null,
-  }
-  const sword1 = {
-    name: 'Sword zwykły',
-    type: 'weapon',
-    image: '/items/SWORDS/SWORD 1.png',
-    stats: {
-      damage: 10,
-    },
-  }
-  const sword2 = {
-    name: 'Sword Lepszy',
-    type: 'weapon',
-    image: '/items/SWORDS/SWORD 2.png',
-    stats: {
-      damage: 20,
-    },
-  }
-  const armor1 = {
-    name: 'Armor 1',
-    type: 'armor',
-    image: '/items/ARMORS/ARMOR 1.png',
-    stats: {
-      def: 10,
-    },
-  }
-
-  const armor2 = {
-    name: 'Armor 2',
-    type: 'armor',
-    image: '/items/ARMORS/ARMOR 2.png',
-    stats: {
-      def: 20,
-    },
-  }
-
-  const [inventory, setInventory] = useState({
+const getInitialInventoryState = () => {
+  return {
     all: Array.from({ length: 36 }, (_, i) => {
       return {
         position: i + 1,
@@ -99,7 +52,7 @@ const Inventory = ({ data }: any) => {
     eq: {
       amulet: null,
       helmet: null,
-      bag: backpack,
+      bag: null,
       weapon: null,
       armor: null,
       shield: null,
@@ -107,7 +60,23 @@ const Inventory = ({ data }: any) => {
       boots: null,
       ring: null,
     },
-  })
+  }
+}
+
+const Inventory = ({ data }: any) => {
+  const { data: inventoryDB } = useGetInventoryQuery()
+  const [updateInventoryDB] = useUpdateInventoryMutation()
+  // const [updatePlayerDB, { isLoading: isLoadingPlayer, error: isErrorPlayer }] =
+  //   useUpdateCurrentPlayerMutation()
+
+  const [eatInventoryDB] = useEatItemInventoryMutation()
+  // const {
+  //   data: playerData,
+  //   isLoading: isLoadingKK,
+  //   refetch: refetchPlayerData,
+  // } = useGetCurrentPlayerQuery()
+
+  const [inventory, setInventory] = useState(getInitialInventoryState)
   const itemsCountInventory = inventory.all.reduce((acc, curr) => {
     return Object.keys(curr?.item).length > 0 ? acc + 1 : acc
   }, 0)
@@ -120,7 +89,6 @@ const Inventory = ({ data }: any) => {
           item: inventoryDB.all[i] ?? {},
         }
       })
-      console.log('allItems', allItems)
 
       setInventory({
         all: allItems,
@@ -213,8 +181,6 @@ const Inventory = ({ data }: any) => {
         : e
     })
 
-    console.log('INVENTORY ALL', inventoryAll)
-
     const inventoryIds = inventoryAll.reduce((acc, current) => {
       if (current.item._id) {
         return [...acc, current.item._id]
@@ -228,16 +194,14 @@ const Inventory = ({ data }: any) => {
     })
 
     // @TODO UPDATE ON BE
-    updatePlayerDB({ healthPoints: 100, energy: 100, manaPoints: 100 })
+    // updatePlayerDB({ healthPoints: 100, energy: 100, manaPoints: 100 })
 
     // console.log('ITEM', item.item)
 
-    updateInventoryDB({
+    eatInventoryDB({
       itemToConsume: item.item,
       allInventoryIds: inventoryIds,
     })
-
-    // refetchPlayerData()
   }
 
   return (
@@ -289,21 +253,6 @@ const Inventory = ({ data }: any) => {
                         src={inventory.eq[el].image}
                         alt={inventory.eq[el].name}
                       />
-                      {/* <div
-                        className={styles.box}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          margin: '0',
-                          border: '2px solid #654321',
-                        }}
-                      >
-                        <img
-                          // style={{ width: '100%', height: '100%' }}
-                          src={inv.item.image}
-                          alt={inv.item.name}
-                        />
-                      </div> */}
                     </PopoverTrigger>
                     <PopoverContent>
                       <PopoverArrow />
@@ -322,10 +271,6 @@ const Inventory = ({ data }: any) => {
                         <Text mb={2} fontSize='small'>
                           {inventory.eq[el].description}
                         </Text>
-
-                        {/* <Button onClick={() => unEquip(inventory.eq[el])}>
-                          Zdejmij
-                        </Button> */}
 
                         <Flex justifyContent={'space-between'}>
                           <Button

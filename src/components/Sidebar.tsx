@@ -37,6 +37,7 @@ import {
   FiChevronDown,
   FiCornerLeftDown,
 } from 'react-icons/fi'
+import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import { IconType } from 'react-icons'
 import { ReactText } from 'react'
 
@@ -46,13 +47,13 @@ interface LinkItemProps {
   url?: string
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome, url: '/game' },
-  { name: 'Ekwipunek', icon: FiShoppingBag, url: '/game/equipment' },
+  // { name: 'Home', icon: FiHome, url: '/game' },
   { name: 'Eksploracja', icon: FiCompass, url: '/game' },
+  { name: 'Ekwipunek', icon: FiShoppingBag, url: '/game/equipment' },
   { name: 'Zadania', icon: FiCompass, url: '/game/quests' },
-  { name: 'Fragmenty', icon: FiMap },
-  { name: 'Praca', icon: FiClock },
-  { name: 'Chat', icon: FiStar },
+  // { name: 'Fragmenty', icon: FiMap },
+  // { name: 'Praca', icon: FiClock },
+  // { name: 'Chat', icon: FiStar },
 
   // { name: 'Wyloguj', icon: FiCornerLeftDown },
 ]
@@ -92,6 +93,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const [sendLogout] = useSendLogoutMutation()
   return (
     <Box
       // transition='3s ease'
@@ -114,8 +116,12 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
-      <NavItem key={'logout'} icon={FiCornerLeftDown}>
-        Wyloguj
+      <NavItem
+        onClick={() => sendLogout()}
+        key={'logout'}
+        icon={FiCornerLeftDown}
+      >
+        Wyloguj się
       </NavItem>
     </Box>
   )

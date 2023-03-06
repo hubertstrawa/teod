@@ -15,10 +15,14 @@ import Coins from '../icons/Coins'
 import Cash from '../icons/Cash'
 import HeartIcon from '../icons/HeartIcon'
 import ManaIcon from '../icons/ManaIcon'
+import { useGetCurrentPlayerQuery } from '../features/player/playerApiSlice'
 import { m } from 'framer-motion'
 
-const PlayerBadge = ({ player }) => {
-  if (!player?.data) return null
+const PlayerBadge = () => {
+  const { data: player, isLoading } = useGetCurrentPlayerQuery()
+
+  console.log('data', player)
+
   const {
     playerName,
     healthPoints,
@@ -32,10 +36,9 @@ const PlayerBadge = ({ player }) => {
     money,
   } = player.data
 
-  console.log('player', player)
-
   return (
     <Flex style={{ cursor: 'pointer' }}>
+      {isLoading && <h1>LOADINGGG</h1>}
       <Avatar
         src={avatar ?? '/avatars/variant-01.png'}
         border={'2px solid #fff'}

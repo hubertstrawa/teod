@@ -1,4 +1,5 @@
 import { Box, Image, Text, Progress } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const PlayerCharacter = ({
@@ -7,11 +8,21 @@ const PlayerCharacter = ({
   enemyAttackValue,
 }: any) => {
   const healthPercent = (100 * healthPoints) / maxHealthPoints
+  const [enemyHit, setEnemyHit] = useState(0)
+
+  useEffect(() => {
+    setEnemyHit(enemyAttackValue)
+    setTimeout(() => {
+      setEnemyHit(0)
+    }, 500)
+  }, [enemyAttackValue])
+
+  console.log('enemyHIT', enemyHit)
   return (
     <Box position={'relative'}>
       {healthPoints}
       <AnimatePresence>
-        {enemyAttackValue > 0 ? (
+        {enemyHit > 0 ? (
           <Text
             as={motion.p}
             margin={'auto'}
@@ -23,23 +34,9 @@ const PlayerCharacter = ({
             position={'absolute'}
             color={'red'}
           >
-            - {enemyAttackValue} HP
+            - {enemyHit} HPp
           </Text>
-        ) : (
-          <Text
-            as={motion.p}
-            margin={'auto'}
-            textAlign={'center'}
-            top={-8}
-            initial={{ left: 0 }}
-            animate={{ left: 25, scale: 1.3, opacity: 1 }}
-            exit={{ left: 0, scale: 0, opacity: 0 }}
-            position={'absolute'}
-            color={'red'}
-          >
-            - {enemyAttackValue} HP
-          </Text>
-        )}
+        ) : null}
       </AnimatePresence>
       <AnimatePresence>
         {healthPoints > 0 && (
