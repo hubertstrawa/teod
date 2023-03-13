@@ -31,6 +31,14 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Inventory', 'Player'],
     }),
+    buyItemTrader: builder.mutation<any, any>({
+      query: (itemId) => ({
+        url: `/inventory/buyItem`,
+        method: 'POST',
+        body: { itemId },
+      }),
+      invalidatesTags: ['Inventory', 'Player'],
+    }),
   }),
 })
 
@@ -39,4 +47,5 @@ export const {
   useAddToInventoryMutation,
   useUpdateInventoryMutation,
   useEatItemInventoryMutation,
+  useBuyItemTraderMutation,
 } = inventoryApiSlice

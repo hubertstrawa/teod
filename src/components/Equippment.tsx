@@ -1,4 +1,4 @@
-import Inventory from '../components/Inventory'
+import Inventory from './Inventory/Inventory'
 import { Box, Grid } from '@chakra-ui/react'
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'

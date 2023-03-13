@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { setCredentials } from '../auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.NEXT_PUBLIC_API_URL}`,
+  baseUrl: `https://api.teod.pl/api/v1`,
   credentials: 'include',
   prepareHeaders: (headers, { getState }: any) => {
     const token = getState().auth.token
@@ -26,7 +26,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   console.log('RESULT =====', result)
 
   // If you want, handle other status codes, too
-  if (result?.error?.status === 403) {
+  if (result?.error?.status === 401) {
     console.log('sending refresh token')
 
     // send refresh token to get new access token
@@ -54,7 +54,7 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
   // tagTypes: ['Player, Inventory'],
-  tagTypes: ['Player', 'Inventory'],
+  tagTypes: ['Player', 'Inventory', 'Questlog'],
 
   endpoints: () => ({}),
 })

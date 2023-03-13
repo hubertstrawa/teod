@@ -50,7 +50,7 @@ export default function Home() {
 
     if (!password || !email) return null
     try {
-      const { accessToken } = await login({
+      const { accessToken, isNewPlayer } = await login({
         email,
         password,
       }).unwrap()

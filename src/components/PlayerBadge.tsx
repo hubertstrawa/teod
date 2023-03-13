@@ -16,7 +16,7 @@ import Cash from '../icons/Cash'
 import HeartIcon from '../icons/HeartIcon'
 import ManaIcon from '../icons/ManaIcon'
 import { useGetCurrentPlayerQuery } from '../features/player/playerApiSlice'
-import { m } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const PlayerBadge = () => {
   const { data: player, isLoading } = useGetCurrentPlayerQuery()
@@ -26,7 +26,9 @@ const PlayerBadge = () => {
   const {
     playerName,
     healthPoints,
+    maxHealthPoints,
     manaPoints,
+    maxManaPoints,
     power,
     energy,
     experience,
@@ -34,13 +36,14 @@ const PlayerBadge = () => {
     race,
     level,
     money,
-  } = player.data
+  } = player?.data ?? {}
 
   return (
-    <Flex style={{ cursor: 'pointer' }}>
-      {isLoading && <h1>LOADINGGG</h1>}
+    <Flex height='min-content' style={{ cursor: 'pointer' }}>
       <Avatar
-        src={avatar ?? '/avatars/variant-01.png'}
+        size={'lg'}
+        bgColor={'gray.900'}
+        src={avatar ?? '/avatars/orc-m.png'}
         border={'2px solid #fff'}
       />
       <Box ml='3' display={'flex'}>
@@ -50,18 +53,20 @@ const PlayerBadge = () => {
             {/* ({race ?? 'mage'})  */}
             LEVEL {level} / {experience} EXP
           </Badge>
-          <Text fontSize='sm' textAlign='left'>
-            Energy: {energy}
-          </Text>
           <Text
             display={'flex'}
             alignItems={'center'}
             fontSize='sm'
             textAlign='left'
           >
-            {healthPoints} <HeartIcon style={{ marginLeft: '5px' }} />
-            <span style={{ margin: '0 5px' }}>|</span>
-            {manaPoints} <ManaIcon style={{ marginLeft: '5px' }} />
+            {healthPoints} / {maxHealthPoints}{' '}
+            <HeartIcon style={{ marginLeft: '5px' }} />
+            <span style={{ margin: '0 7px' }}></span>
+            {manaPoints} / {maxManaPoints}
+            <ManaIcon style={{ marginLeft: '5px' }} />
+          </Text>
+          <Text fontSize='sm' textAlign='left'>
+            Energy: {energy}
           </Text>
         </Box>
       </Box>

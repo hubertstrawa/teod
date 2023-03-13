@@ -2,6 +2,9 @@ import { Box, Image, Text, Progress } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AttackNormal from '../../icons/AttackNormal'
 import AttackFire from '../../icons/AttackFire'
+import Lottie from 'lottie-react'
+import fireAnimation from './fire-animation.json'
+import lightningAnimation from './red-lightning-animation.json'
 
 import { AttackType } from './Battle'
 const BattleCharacter = ({
@@ -30,7 +33,12 @@ const BattleCharacter = ({
           >
             - {playerAttackValue}
             {playerAttack === AttackType.NORMAL && <AttackNormal />}
-            {playerAttack === AttackType.FIRE && <AttackFire />}
+            {/* {playerAttack === AttackType.NORMAL && (
+              <Lottie animationData={lightningAnimation} />
+            )} */}
+            {playerAttack === AttackType.FIRE && (
+              <Lottie animationData={fireAnimation} />
+            )}
           </Text>
         )}
       </AnimatePresence>
@@ -43,7 +51,11 @@ const BattleCharacter = ({
             exit={{ opacity: 0 }}
           >
             <Progress colorScheme='green' size={'sm'} value={healthPercent} />
-            <Image width='100px' height='100px' src={'images/wolf-no-bg.png'} />
+            <Image
+              width='100px'
+              height='100px'
+              src={'/monsters/cursed-pig-transparent.png'}
+            />
           </Box>
         )}
       </AnimatePresence>

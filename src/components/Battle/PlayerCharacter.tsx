@@ -50,7 +50,7 @@ const PlayerCharacter = ({
             <Image
               width='100px'
               height='100px'
-              src={'images/warrior-no-bg.png'}
+              src={'/images/warrior-no-bg.png'}
             />
           </Box>
         )}

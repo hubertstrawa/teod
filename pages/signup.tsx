@@ -12,10 +12,45 @@ import {
   Text,
   useColorModeValue,
   useToast,
+  useRadioGroup,
+  useRadio,
+  HStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useSignUpMutation } from '../src/features/auth/authApiSlice'
+
+function RadioCard(props) {
+  const { getInputProps, getCheckboxProps } = useRadio(props)
+
+  const input = getInputProps()
+  const checkbox = getCheckboxProps()
+
+  return (
+    <Box as='label'>
+      <input {...input} />
+      <Box
+        {...checkbox}
+        cursor='pointer'
+        borderWidth='1px'
+        borderRadius='md'
+        boxShadow='md'
+        _checked={{
+          bg: 'teal.600',
+          color: 'white',
+          borderColor: 'teal.600',
+        }}
+        _focus={{
+          boxShadow: 'outline',
+        }}
+        px={5}
+        py={3}
+      >
+        {props.children}
+      </Box>
+    </Box>
+  )
+}
 
 const Signup = () => {
   const [email, setEmail] = useState('')
@@ -63,6 +98,16 @@ const Signup = () => {
     }
   }
 
+  const options = ['human', 'elf', 'orc']
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: 'race',
+    defaultValue: 'human',
+    onChange: console.log,
+  })
+
+  const group = getRootProps()
+
   return (
     <Box
       bgImage={'/images/background2.png'}
@@ -106,6 +151,19 @@ const Signup = () => {
                     type='playerName'
                     onChange={(e) => setPlayerName(e.target.value)}
                   />
+                </FormControl>
+                <FormControl id='race'>
+                  <FormLabel>Rasa</FormLabel>
+                  <HStack {...group}>
+                    {options.map((value) => {
+                      const radio = getRadioProps({ value })
+                      return (
+                        <RadioCard key={value} {...radio}>
+                          {value}
+                        </RadioCard>
+                      )
+                    })}
+                  </HStack>
                 </FormControl>
                 <FormControl id='password' isRequired>
                   <FormLabel>Hasło</FormLabel>

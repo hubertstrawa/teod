@@ -1,12 +1,13 @@
-import Inventory from './Inventory'
+import Inventory from './Inventory/Inventory'
 import { Box, Grid } from '@chakra-ui/react'
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import woodenBg from '../assets/woodenbg.png'
 import PlayerBadge from './PlayerBadge'
 import { useGetCurrentPlayerQuery } from '../features/player/playerApiSlice'
+import InventoryShop from './Inventory/InventoryShop'
 
-const Quests = () => {
+const Shop = () => {
   const { data, isLoading } = useGetCurrentPlayerQuery()
 
   return (
@@ -27,10 +28,10 @@ const Quests = () => {
         position={'relative'}
       >
         <PlayerBadge />
-        @TODO
+        <InventoryShop />
       </Grid>
     </Box>
   )
 }
 
-export default Quests
+export default Shop

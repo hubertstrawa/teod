@@ -37,9 +37,16 @@ import {
   FiChevronDown,
   FiCornerLeftDown,
 } from 'react-icons/fi'
+import {
+  GiBackpack,
+  GiTrumpetFlag,
+  GiTreasureMap,
+  GiShoppingBag,
+  GiTalk,
+} from 'react-icons/gi'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
+import Chat from './Chat/Chat'
 import { IconType } from 'react-icons'
-import { ReactText } from 'react'
 
 interface LinkItemProps {
   name: string
@@ -48,12 +55,22 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   // { name: 'Home', icon: FiHome, url: '/game' },
-  { name: 'Eksploracja', icon: FiCompass, url: '/game' },
-  { name: 'Ekwipunek', icon: FiShoppingBag, url: '/game/equipment' },
-  { name: 'Zadania', icon: FiCompass, url: '/game/quests' },
+  { name: 'Profil', icon: GiTrumpetFlag, url: '/game' },
+
+  { name: 'Eksploracja', icon: GiTreasureMap, url: '/game/explore' },
+  {
+    name: 'Ekwipunek',
+    icon: GiBackpack,
+    url: '/game/equipment',
+  },
+  { name: 'Zadania', icon: GiTalk, url: '/game/quests' },
   // { name: 'Fragmenty', icon: FiMap },
   // { name: 'Praca', icon: FiClock },
-  // { name: 'Chat', icon: FiStar },
+
+  { name: 'Sklep', icon: GiShoppingBag, url: '/game/shop' },
+  { name: 'Ranking', icon: FiTrendingUp, url: '/game/highscores' },
+
+  // { name: 'Market', icon: FiStar, url: '/game/market' },
 
   // { name: 'Wyloguj', icon: FiCornerLeftDown },
 ]
@@ -104,25 +121,33 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       pos='fixed'
       h='full'
       {...rest}
+      // display={{ md: 'block' }}
+      flexDirection={'column'}
     >
-      <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
-        <Text fontSize='lg' fontFamily='monospace' fontWeight='bold'>
-          The End Of Days
-        </Text>
-        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
-      </Flex>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} to={link.url ?? ''} icon={link.icon}>
-          {link.name}
+      <Flex height='100%' direction='column'>
+        <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
+          <Text fontSize='lg' fontFamily='monospace' fontWeight='bold'>
+            The End Of Days
+          </Text>
+          <CloseButton
+            display={{ base: 'flex', md: 'none' }}
+            onClick={onClose}
+          />
+        </Flex>
+        {LinkItems.map((link) => (
+          <NavItem key={link.name} to={link.url ?? ''} icon={link.icon}>
+            {link.name}
+          </NavItem>
+        ))}
+        <NavItem
+          onClick={() => sendLogout()}
+          key={'logout'}
+          icon={FiCornerLeftDown}
+        >
+          Wyloguj się
         </NavItem>
-      ))}
-      <NavItem
-        onClick={() => sendLogout()}
-        key={'logout'}
-        icon={FiCornerLeftDown}
-      >
-        Wyloguj się
-      </NavItem>
+        <Chat />
+      </Flex>
     </Box>
   )
 }
@@ -130,7 +155,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 interface NavItemProps extends FlexProps {
   icon: IconType
   to?: string
-  children: ReactText
+  children: any
 }
 const NavItem = ({ icon, to, children, ...rest }: NavItemProps) => {
   return to ? (

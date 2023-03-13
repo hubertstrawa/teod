@@ -2,7 +2,7 @@ import Equippment from '../../src/components/Equippment'
 import Sidebar from '../../src/components/Sidebar'
 import Authorized from '../../src/components/Authorized'
 
-const Equipment = () => {
+const EquipmentPage = () => {
   return (
     <Authorized>
       <Sidebar>
@@ -12,4 +12,4 @@ const Equipment = () => {
   )
 }
 
-export default Equipment
+export default EquipmentPage

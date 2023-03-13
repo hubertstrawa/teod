@@ -200,7 +200,10 @@ const Battle = ({
       // console.log(level * 100)
       const expNeededForLevel = level * (level + 1) * 100
       // console.log('expNeededForLevel', expNeededForLevel)
-      const goldEarned = getRandomIntMinMax(2, currentEnemy.maxMoney)
+      const goldEarned = getRandomIntMinMax(
+        currentEnemy.maxMoney / 2,
+        currentEnemy.maxMoney
+      )
       const expEarned = currentEnemy.experience
       setPlayerProgress({ ...playerProgress, expEarned, goldEarned })
       console.log('LOOT', currentEnemy.loot)
@@ -362,7 +365,7 @@ const Battle = ({
       isOpen={isBattleOpen}
       scrollBehavior='inside'
     >
-      <ModalOverlay background={'rgba(0,0,0, 0.8)'} />
+      <ModalOverlay background={'rgba(0,0,0, 0.85)'} />
       <ModalContent>
         <ModalHeader padding={3} display={'flex'}>
           <Avatar
@@ -401,14 +404,14 @@ const Battle = ({
         </ModalHeader>
         <ModalCloseButton disabled={!battleStatus.isBattleOver} />
         <ModalBody
-          backgroundImage={'images/background22.png'}
+          backgroundImage={'/images/background22.png'}
           backgroundSize='100%'
           padding={0}
           height='100%'
           minH={'lg'}
           overflow='hidden'
         >
-          <Box backgroundColor={'rgba(34,34,34, 0.45)'}>
+          <Box backgroundColor={'rgba(10,10,10, 0.55)'}>
             {/* {battleStatus?.playerAttack === AttackType.NORMAL && (
               <Image
                 as={motion.img}

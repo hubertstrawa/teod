@@ -1,8 +1,8 @@
-import Quests from '../../src/components/Quests'
+import Quests from '../../src/components/Quests/Quests'
 import Sidebar from '../../src/components/Sidebar'
 import Authorized from '../../src/components/Authorized'
 
-const Equipment = () => {
+const QuestsPage = () => {
   return (
     <Authorized>
       <Sidebar>
@@ -12,4 +12,4 @@ const Equipment = () => {
   )
 }
 
-export default Equipment
+export default QuestsPage

@@ -6,6 +6,9 @@ export const playerApiSlice = apiSlice.injectEndpoints({
       query: () => `/player/me`,
       providesTags: ['Player'],
     }),
+    getPlayersHighscores: builder.query<any, void>({
+      query: () => `/player/highscores`,
+    }),
     updateCurrentPlayer: builder.mutation<any, any>({
       query: (data) => ({
         url: `/player/updateMe`,
@@ -17,5 +20,8 @@ export const playerApiSlice = apiSlice.injectEndpoints({
   }),
 })
 
-export const { useGetCurrentPlayerQuery, useUpdateCurrentPlayerMutation } =
-  playerApiSlice
+export const {
+  useGetCurrentPlayerQuery,
+  useGetPlayersHighscoresQuery,
+  useUpdateCurrentPlayerMutation,
+} = playerApiSlice
