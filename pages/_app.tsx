@@ -5,6 +5,8 @@ import { useEffect } from 'react'
 import theme from '../src/theme'
 import { store } from '../src/store'
 
+// const inter = Inter({ subsets: ['latin'] })
+
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -21,11 +21,13 @@ const InventoryEq = ({ inventory, unEquip }) => {
       // backgroundImage={'/images/eq-background.png'}
       backgroundSize={'100%'}
       backgroundPosition={'center'}
+      // padding={12}
       templateAreas={`"a-1 a-2 a-3"
             "b-1 b-2 b-3"
             "c-1 c-2 c-3"`}
-      gridTemplateRows={'repeat(3, 1fr)'}
-      gridTemplateColumns={'repeat(3, 1fr)'}
+      gridTemplateRows={'repeat(3, 120px)'}
+      flex={1}
+      gridTemplateColumns={'repeat(3, 120px)'}
       gap={8}
       // padding={4}
       // background='rgba(255,255,255,0.2)'
@@ -36,8 +38,11 @@ const InventoryEq = ({ inventory, unEquip }) => {
         return inventory.eq[el] ? (
           <GridItem
             // area={'a-1'}
-            border='2px solid #654321'
-            bgColor={'rgba(52,34,17, 0.5)'}
+            border='2px solid gray'
+            borderRadius={10}
+            bgGradient='linear(to-b, rgba(0,0,0, 0.7), rgba(50,50,50, 0.7))'
+            // bgGradient='linear(to-l, gray.700, gray.800)'
+            // bgColor={'rgba(52,34,17, 0.5)'}
             cursor='pointer'
           >
             <Popover>
@@ -89,8 +94,11 @@ const InventoryEq = ({ inventory, unEquip }) => {
         ) : (
           <GridItem
             // area={'a-1'}
-            bgColor={'rgba(52,34,17, 0.8)'}
-            border='3px solid #654321'
+            bgGradient='linear(to-l, gray.700, gray.900)'
+            // bgColor={'rgba(52,34,17, 0.8)'}
+            border='2px solid'
+            borderColor={'gray'}
+            borderRadius={10}
           >
             <img
               src={`/items/armor-bg.png`}

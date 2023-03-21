@@ -13,10 +13,10 @@ import {
 import { useGetPlayersHighscoresQuery } from '../features/player/playerApiSlice'
 const Highscores = () => {
   const { data: players } = useGetPlayersHighscoresQuery()
-  return (
+  return !!players ? (
     <TableContainer>
       <Table variant='simple'>
-        <TableCaption>Imperial to metric conversion factors</TableCaption>
+        <TableCaption>TEOD 2023</TableCaption>
         <Thead>
           <Tr>
             <Th>Nazwa gracza</Th>
@@ -43,7 +43,7 @@ const Highscores = () => {
         </Tbody>
       </Table>
     </TableContainer>
-  )
+  ) : null
 }
 
 export default Highscores

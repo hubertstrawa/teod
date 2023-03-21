@@ -7,6 +7,7 @@ import {
   CloseButton,
   Flex,
   HStack,
+  Heading,
   VStack,
   Icon,
   useColorModeValue,
@@ -42,6 +43,7 @@ import {
   GiTrumpetFlag,
   GiTreasureMap,
   GiShoppingBag,
+  GiAbstract076,
   GiTalk,
 } from 'react-icons/gi'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
@@ -126,9 +128,9 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     >
       <Flex height='100%' direction='column'>
         <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
-          <Text fontSize='lg' fontFamily='monospace' fontWeight='bold'>
+          <Heading fontSize='xl' fontWeight='bold'>
             The End Of Days
-          </Text>
+          </Heading>
           <CloseButton
             display={{ base: 'flex', md: 'none' }}
             onClick={onClose}

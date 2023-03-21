@@ -21,6 +21,7 @@ import { GiCrossedAxes } from 'react-icons/gi'
 import IconsElements from './IconsElements'
 
 const Enemy = ({
+  isBattleLoading,
   fight,
   name,
   health_points,
@@ -35,6 +36,9 @@ const Enemy = ({
   isDisabled,
 }: any) => {
   const handleClick = () => {
+    console.log('name', name)
+    console.log('image', image)
+
     fight({
       name,
       experience,
@@ -102,9 +106,10 @@ const Enemy = ({
               isDisabled={isDisabled}
               variant='solid'
               // colorScheme='teal'
-              bgColor={'gray.700'}
+              bgColor={'gray.800'}
               width='100%'
               onClick={handleClick}
+              isLoading={isBattleLoading}
               // display='flex'
               // justifyContent={'space-between'}
             >
@@ -114,10 +119,6 @@ const Enemy = ({
               <GiCrossedAxes size={20} />
             </Button>
           </Tooltip>
-
-          {/* <Button variant='ghost' colorScheme='blue'>
-            Add to cart
-          </Button> */}
         </ButtonGroup>
       </CardFooter>
     </Card>

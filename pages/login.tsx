@@ -23,7 +23,6 @@ const Login = () => {
   const [password, setPassword] = useState('')
 
   const [login, { isLoading, error }] = useLoginMutation()
-  console.log('ERROR', error)
 
   const submitHandler = async (e) => {
     e.preventDefault()

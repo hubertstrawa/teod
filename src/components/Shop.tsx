@@ -1,5 +1,5 @@
 import Inventory from './Inventory/Inventory'
-import { Box, Grid } from '@chakra-ui/react'
+import { Box, Grid, Spinner } from '@chakra-ui/react'
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import woodenBg from '../assets/woodenbg.png'
@@ -10,7 +10,7 @@ import InventoryShop from './Inventory/InventoryShop'
 const Shop = () => {
   const { data, isLoading } = useGetCurrentPlayerQuery()
 
-  return (
+  return !!data ? (
     <Box
       backgroundImage={'/images/inventory-bg2.png'}
       backgroundSize='100%'
@@ -31,6 +31,8 @@ const Shop = () => {
         <InventoryShop />
       </Grid>
     </Box>
+  ) : (
+    <Spinner size='xl' />
   )
 }
 

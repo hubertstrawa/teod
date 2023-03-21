@@ -15,24 +15,15 @@ import { useStartQuestMutation } from '../../../features/questlog/questlogApiSli
 import { Quest } from '../../../features/questlog/Quest'
 import { Box, Grid, useToast, Button, Flex, Text } from '@chakra-ui/react'
 
-const Quest01 = () => {
+const Quest02 = () => {
   const [step, setStep] = useState(1)
   const router = useRouter()
   const toast = useToast()
   const [updatePlayer] = useUpdateCurrentPlayerMutation()
-  const [updateQuestlog] = useStartQuestMutation()
-  useEffect(() => {
-    if (step === 2) {
-      toast({
-        title: 'Zdobyto ',
-        description: '1x Skórzany pancerz',
-        status: 'info',
-        position: 'top-right',
-      })
-    }
-  }, [step])
+  const [startQuest] = useStartQuestMutation()
+
   const submitIntro = async () => {
-    await updateQuestlog(Quest.NA_POCZATKU_BYLO_DRZEWO)
+    await startQuest(Quest.PRZEKLĘTE_WIEWIÓRKI)
     router.push('/game/quests')
   }
   return (
@@ -82,16 +73,11 @@ const Quest01 = () => {
                   lineHeight={1.6}
                   fontSize={{ base: 'xl', lg: '2xl' }}
                 >
-                  O, bastard jednak żyje, obudziłeś się.. *drapie się po czole*
-                  - szkoda. Z drugiej strony -{' '}
-                  <span style={{ color: 'gray' }}>
-                    *przygląda się z irytacją*{' '}
-                  </span>
-                  - wyglądasz jak wyschnięta jaszczurka, podziomek pewnie by Cię
-                  nie tknął. Włóż te szmaty, nie mogę na Ciebie patrzeć.
+                  O, udało się! Teraz znajdź skradziony kubeł na wodę, ukradła
+                  mi go jakaś wiewiórka.
                 </Text>
-                <Button onClick={() => setStep(step + 1)} width={'100%'}>
-                  Gdzie jestem?
+                <Button onClick={submitIntro} width={'100%'}>
+                  Dalej
                 </Button>
               </Box>
             </AnimatePresence>
@@ -203,4 +189,4 @@ const Quest01 = () => {
   )
 }
 
-export default Quest01
+export default Quest02

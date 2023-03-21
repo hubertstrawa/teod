@@ -7,27 +7,27 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
       query: () => `/inventory/mine`,
       providesTags: ['Inventory'],
     }),
-    addToInventory: builder.mutation<{ data: IItem }, number>({
-      query: (data) => ({
-        url: `/inventory/addInventory`,
+    equipItem: builder.mutation<any, any>({
+      query: ({ itemToEquip, index }) => ({
+        url: `/inventory/equipItem`,
         method: 'POST',
-        body: { lootedItemId: data },
+        body: { itemToEquip, index },
       }),
-      invalidatesTags: ['Inventory'],
+      invalidatesTags: ['Inventory', 'Player'],
     }),
-    updateInventory: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `/inventory/updateInventory`,
-        method: 'PATCH',
-        body: { ...data },
+    unequipItem: builder.mutation<any, any>({
+      query: ({ itemToUnequip, index }) => ({
+        url: `/inventory/unequipItem`,
+        method: 'POST',
+        body: { itemToUnequip, index },
       }),
-      invalidatesTags: ['Inventory'],
+      invalidatesTags: ['Inventory', 'Player'],
     }),
-    eatItemInventory: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `/inventory/updateInventory`,
-        method: 'PATCH',
-        body: { ...data },
+    eatFood: builder.mutation<any, any>({
+      query: ({ itemToConsume, index }) => ({
+        url: `/inventory/eatFood`,
+        method: 'POST',
+        body: { itemToConsume, index },
       }),
       invalidatesTags: ['Inventory', 'Player'],
     }),
@@ -39,13 +39,28 @@ export const inventoryApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Inventory', 'Player'],
     }),
+    sellItemTrader: builder.mutation<any, any>({
+      query: (itemId) => ({
+        url: `/inventory/sellItem`,
+        method: 'POST',
+        body: { itemId },
+      }),
+      invalidatesTags: ['Inventory', 'Player'],
+    }),
+    getItemsSell: builder.query<any, void>({
+      query: () => `/inventory/getItemsSell`,
+      providesTags: ['Inventory'],
+    }),
   }),
 })
 
 export const {
+  useLazyGetInventoryQuery,
   useGetInventoryQuery,
-  useAddToInventoryMutation,
-  useUpdateInventoryMutation,
-  useEatItemInventoryMutation,
   useBuyItemTraderMutation,
+  useEatFoodMutation,
+  useEquipItemMutation,
+  useUnequipItemMutation,
+  useGetItemsSellQuery,
+  useSellItemTraderMutation,
 } = inventoryApiSlice

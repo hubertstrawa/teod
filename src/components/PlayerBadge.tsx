@@ -38,6 +38,17 @@ const PlayerBadge = () => {
     money,
   } = player?.data ?? {}
 
+  const expNeededForLevel = level * (level + 1) * 100
+  console.log('expneeded', expNeededForLevel)
+  console.log('experience', experience)
+  console.log('need ', expNeededForLevel - experience)
+  console.log(
+    'test ',
+    Math.round(((expNeededForLevel - experience) * 100) / expNeededForLevel)
+  )
+
+  console.log('player', player)
+
   return (
     <Flex height='min-content' style={{ cursor: 'pointer' }}>
       <Avatar
@@ -51,7 +62,7 @@ const PlayerBadge = () => {
           {playerName}
           <Badge ml='1' colorScheme='green'>
             {/* ({race ?? 'mage'})  */}
-            LEVEL {level} / {experience} EXP
+            Poziom {level} / {experience} EXP
           </Badge>
           <Text
             display={'flex'}
@@ -66,7 +77,7 @@ const PlayerBadge = () => {
             <ManaIcon style={{ marginLeft: '5px' }} />
           </Text>
           <Text fontSize='sm' textAlign='left'>
-            Energy: {energy}
+            Energia: {energy}
           </Text>
         </Box>
       </Box>

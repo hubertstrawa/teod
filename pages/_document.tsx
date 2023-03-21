@@ -5,6 +5,13 @@ export default function Document() {
     <Html>
       <Head />
       <body>
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link rel='preconnect' href='https://fonts.gstatic.com' />
+        <link
+          href='https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap'
+          rel='stylesheet'
+        />
+
         <GlobalLoader />
         <Main />
         <NextScript />
@@ -36,9 +43,9 @@ const GlobalLoader = () => {
       >
         <defs>
           <linearGradient x1='8.042%' y1='0%' x2='65.682%' y2='23.865%' id='a'>
-            <stop stop-color='#fff' stop-opacity='0' offset='0%' />
-            <stop stop-color='#fff' stop-opacity='.631' offset='63.146%' />
-            <stop stop-color='#fff' offset='100%' />
+            <stop stopColor='#fff' stopOpacity='0' offset='0%' />
+            <stop stopColor='#fff' stopOpacity='.631' offset='63.146%' />
+            <stop stopColor='#fff' offset='100%' />
           </linearGradient>
         </defs>
         <g fill='none' fill-rule='evenodd'>
@@ -47,7 +54,7 @@ const GlobalLoader = () => {
               d='M36 18c0-9.94-8.06-18-18-18'
               id='Oval-2'
               stroke='url(#a)'
-              stroke-width='2'
+              strokeWidth='2'
             >
               <animateTransform
                 attributeName='transform'

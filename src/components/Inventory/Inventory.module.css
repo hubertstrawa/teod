@@ -1,18 +1,18 @@
 .box {
-  padding: 3px;
-  border: 1px solid brown;
-  height: 40px;
+  /* padding: 3px; */
+  /* border: 1px solid brown; */
+  /* height: 40px;
   width: 40px;
   margin: 0 5px;
   cursor: pointer;
   display: inline-block;
   border-radius: 6px;
-  position: relative;
+  position: relative; */
 }
 
-.quantity {
+/* .quantity {
   position: absolute;
   font-size: 0.6rem;
   left: 3px;
   top: 0;
-}
+} */

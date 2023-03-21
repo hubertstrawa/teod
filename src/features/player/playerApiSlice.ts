@@ -9,6 +9,14 @@ export const playerApiSlice = apiSlice.injectEndpoints({
     getPlayersHighscores: builder.query<any, void>({
       query: () => `/player/highscores`,
     }),
+    addAttribute: builder.mutation<any, any>({
+      query: (attributeName) => ({
+        url: `/player/addAttribute`,
+        method: 'POST',
+        body: { attributeName },
+      }),
+      invalidatesTags: ['Player'],
+    }),
     updateCurrentPlayer: builder.mutation<any, any>({
       query: (data) => ({
         url: `/player/updateMe`,
@@ -24,4 +32,5 @@ export const {
   useGetCurrentPlayerQuery,
   useGetPlayersHighscoresQuery,
   useUpdateCurrentPlayerMutation,
+  useAddAttributeMutation,
 } = playerApiSlice

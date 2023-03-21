@@ -4,6 +4,7 @@ import { setCredentials } from '../auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `https://api.teod.pl/api/v1`,
+  // baseUrl: `http://localhost:3003/api/v1`,
   credentials: 'include',
   prepareHeaders: (headers, { getState }: any) => {
     const token = getState().auth.token
@@ -23,7 +24,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
   let result = await baseQuery(args, api, extraOptions)
 
-  console.log('RESULT =====', result)
+  // console.log('RESULT =====', result)
 
   // If you want, handle other status codes, too
   if (result?.error?.status === 401) {
@@ -54,7 +55,7 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
   // tagTypes: ['Player, Inventory'],
-  tagTypes: ['Player', 'Inventory', 'Questlog'],
+  tagTypes: ['Player', 'Inventory', 'Questlog', 'Battlelog', 'Enemy'],
 
   endpoints: () => ({}),
 })

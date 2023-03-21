@@ -1,10 +1,12 @@
 // @ts-nocheck
-import { Flex } from '@chakra-ui/react'
+import { Flex, Heading, useBreakpointValue } from '@chakra-ui/react'
 import {
   useGetInventoryQuery,
-  useUpdateInventoryMutation,
-  useEatItemInventoryMutation,
+  useEatFoodMutation,
+  useEquipItemMutation,
+  useUnequipItemMutation,
 } from '../../features/inventory/inventoryApiSlice'
+
 import { useEffect, useState } from 'react'
 import Statistics from '../Statistics'
 import InventoryItems from './InventoryItems'
@@ -13,7 +15,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 const getInitialInventoryState = () => {
   return {
-    all: Array.from({ length: 36 }, (_, i) => {
+    all: Array.from({ length: 35 }, (_, i) => {
       return {
         position: i + 1,
         item: {},
@@ -35,14 +37,16 @@ const getInitialInventoryState = () => {
 
 const Inventory = ({ data }: any) => {
   const { data: inventoryDB } = useGetInventoryQuery()
-  const [updateInventoryDB] = useUpdateInventoryMutation()
-
-  const [eatInventoryDB] = useEatItemInventoryMutation()
+  const [eatFood] = useEatFoodMutation()
+  const [equipItem] = useEquipItemMutation()
+  const [unequipItem] = useUnequipItemMutation()
 
   const [inventory, setInventory] = useState(getInitialInventoryState)
   const itemsCountInventory = inventory.all.reduce((acc, curr) => {
     return Object.keys(curr?.item).length > 0 ? acc + 1 : acc
   }, 0)
+
+  console.log('invenDB', inventoryDB)
 
   useEffect(() => {
     if (inventoryDB) {
@@ -61,41 +65,9 @@ const Inventory = ({ data }: any) => {
   }, [inventoryDB])
 
   const unEquip = (itemToUnequip: any) => {
-    const emptyItemInInventory = inventory.all.find(
-      (i) => Object.keys(i.item).length === 0
-    )
-
-    if (!!emptyItemInInventory) {
-      const indexToUpdate = inventory.all.indexOf(emptyItemInInventory)
-      const updatedInventory = inventory.all.map((item, i) => {
-        return i !== indexToUpdate
-          ? item
-          : {
-              position: item.position,
-              item: itemToUnequip,
-            }
-      })
-
-      const inventoryIds = updatedInventory.reduce((acc, current) => {
-        if (current.item._id) {
-          return [...acc, current.item._id]
-        }
-        return acc
-      }, [])
-
-      updateInventoryDB({
-        itemToRemove: itemToUnequip,
-        allInventoryIds: inventoryIds,
-      })
-
-      setInventory({
-        eq: {
-          ...inventory.eq,
-          [itemToUnequip.type]: null,
-        },
-        all: updatedInventory,
-      })
-    }
+    unequipItem({
+      itemToUnequip: itemToUnequip,
+    })
   }
 
   const equip = (item: any) => {
@@ -103,33 +75,9 @@ const Inventory = ({ data }: any) => {
       (i) => i.position === item.position
     )
 
-    const inventoryAll = inventory.all.map((e, i) => {
-      return i === inventory.all.indexOf(itemFromArgument)
-        ? {
-            position: itemFromArgument.position,
-            item: inventory.eq[item.item.type] ?? {},
-          }
-        : e
-    })
-
-    const inventoryIds = inventoryAll.reduce((acc, current) => {
-      if (current.item._id) {
-        return [...acc, current.item._id]
-      }
-      return acc
-    }, [])
-
-    setInventory({
-      all: inventoryAll,
-      eq: {
-        ...inventory.eq,
-        [item.item.type]: item.item,
-      },
-    })
-
-    updateInventoryDB({
-      item: itemFromArgument.item,
-      allInventoryIds: inventoryIds,
+    equipItem({
+      itemToEquip: itemFromArgument.item,
+      index: inventory.all.indexOf(itemFromArgument),
     })
   }
 
@@ -138,34 +86,21 @@ const Inventory = ({ data }: any) => {
       (e) => e.position === item.position
     )
 
-    const inventoryAll = inventory.all.map((e, i) => {
-      return i === inventory.all.indexOf(indexItemToRemoveFromInv)
-        ? { position: indexItemToRemoveFromInv.position, item: {} }
-        : e
-    })
-
-    const inventoryIds = inventoryAll.reduce((acc, current) => {
-      if (current.item._id) {
-        return [...acc, current.item._id]
-      }
-      return acc
-    }, [])
-
-    setInventory({
-      ...inventory,
-      all: inventoryAll,
-    })
-
-    eatInventoryDB({
+    eatFood({
       itemToConsume: item.item,
-      allInventoryIds: inventoryIds,
+      index: inventory.all.indexOf(indexItemToRemoveFromInv),
     })
   }
 
   return (
     <>
-      <Flex padding={16} justifyContent={'space-between'}>
+      <Flex
+        padding={useBreakpointValue({ base: 0, md: 10 })}
+        flexDirection={{ base: 'column', lg: 'row' }}
+        justifyContent={'space-between'}
+      >
         <Flex
+          marginTop={10}
           as={motion.div}
           transition={{
             type: 'spring',
@@ -183,8 +118,27 @@ const Inventory = ({ data }: any) => {
           }}
           flexDir={'column'}
         >
+          <Heading
+            position={'relative'}
+            _after={{
+              content: "''",
+              width: 'full',
+              height: useBreakpointValue({ base: '20%', md: '50%' }),
+              position: 'absolute',
+              bottom: 1,
+              left: 0,
+              bgGradient: 'linear(to-t, gray.700, gray.900)',
+              // bg: 'gray.700',
+              zIndex: -1,
+            }}
+            marginBottom={14}
+            alignSelf={'flex-start'}
+            letterSpacing='2px'
+          >
+            Ekwipunek
+          </Heading>
           <InventoryEq inventory={inventory} unEquip={unEquip} />
-          <Statistics eq={inventoryDB?.eq} />
+          {/* <Statistics eq={inventoryDB?.eq} /> */}
           {/* <Box textAlign={'left'} mt={'auto'}>
             <Text>Statystyki</Text>
             <Box>Siła: 1</Box>

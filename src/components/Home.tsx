@@ -10,6 +10,7 @@ import {
   Flex,
   Avatar,
   Button,
+  Tooltip,
   Badge,
   Grid,
   IconButton,
@@ -22,7 +23,9 @@ import {
   StatHelpText,
   StatArrow,
   StatGroup,
+  Spinner,
 } from '@chakra-ui/react'
+import Statistics from './Statistics'
 import { FiPlus } from 'react-icons/fi'
 import {
   useGetCurrentPlayerQuery,
@@ -33,7 +36,24 @@ import PlayerBadge from './PlayerBadge'
 
 const Home = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { data: player } = useGetCurrentPlayerQuery()
+  const { data: player, isLoading } = useGetCurrentPlayerQuery()
+  if (isLoading) return <Spinner size='xl' />
+  const { level, experience } = player?.data
+
+  const expNeededForLevel = level * (level + 1) * 100 // 2000
+  const expNeededPreviousLevel = level * (level - 1) * 100 // 1200
+
+  const substractedExp = expNeededForLevel - expNeededPreviousLevel // 800
+  const test = ((experience - expNeededPreviousLevel) * 100) / substractedExp
+
+  console.log('XXXXOXOXOXOXOXOXOOX', test)
+
+  const percentage = Math.round(
+    ((expNeededForLevel - experience) * 100) / expNeededForLevel
+  )
+  console.log('nananan', percentage)
+
+  console.log('nananan', percentage)
 
   return (
     <Box
@@ -45,7 +65,7 @@ const Home = () => {
     >
       <Box
         maxW='full'
-        backgroundColor={'rgba(12,12,12, 0.8)'}
+        backgroundColor={'rgba(12,12,12, 0.75)'}
         margin='0 auto'
         p={12}
         minH='100vh'
@@ -53,32 +73,48 @@ const Home = () => {
       >
         <PlayerBadge />
         <Flex mt={10} gap={10}>
-          <CircularProgress value={40} color='green.400' size={200}>
-            <CircularProgressLabel>{player?.data.level}</CircularProgressLabel>
-          </CircularProgress>
-          <Stat>
-            <StatLabel>Siła </StatLabel>
-            <StatNumber>£0.00</StatNumber>
-            <StatHelpText>
-              {' '}
-              <IconButton
-                variant='outline'
-                colorScheme='teal'
-                aria-label='Send email'
-                icon={<FiPlus />}
-              />
-            </StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>Inteligencja</StatLabel>
-            <StatNumber>£0.00</StatNumber>
-            <StatHelpText>Feb 12 - Feb 28</StatHelpText>
-          </Stat>
-          <Stat>
-            <StatLabel>Witalność</StatLabel>
-            <StatNumber>£0.00</StatNumber>
-            <StatHelpText>Feb 12 - Feb 28</StatHelpText>
-          </Stat>
+          <Box flex='1'>
+            <Tooltip
+              placement={'top-end'}
+              hasArrow
+              fontSize='sm'
+              label={`Do następnego poziomu brakuje Ci  ${
+                expNeededForLevel - experience
+              } EXP`}
+              textAlign='center'
+              aria-label='A tooltip'
+            >
+              <CircularProgress
+                trackColor='gray.700'
+                value={test}
+                color='green.400'
+                size={'sm'}
+                fontFamily={'MedievalSharp, cursive'}
+              >
+                <CircularProgressLabel
+                  bgGradient='linear(to-b, gray.200, teal)'
+                  bgClip='text'
+                  fontWeight='extrabold'
+                  fontSize='8xl'
+                >
+                  <Heading marginTop={3} fontSize={'3xl'}>
+                    Poziom
+                  </Heading>{' '}
+                  {player?.data.level}
+                </CircularProgressLabel>
+              </CircularProgress>
+            </Tooltip>
+            <Flex alignItems={'flex-start'} direction={'column'}>
+              <Text>
+                Punkty doświadczenia: {experience} / {expNeededForLevel}
+              </Text>
+              {/* <Text>Do następnego poziomu: {expNeededForLevel - experience}</Text> */}
+            </Flex>
+          </Box>
+          <Statistics
+            attributes={player?.data?.attributes}
+            playerGold={player?.data?.money}
+          />
         </Flex>
         <IntroTutorial shouldBeVisible={player?.data?.tutorial === 1} />
       </Box>

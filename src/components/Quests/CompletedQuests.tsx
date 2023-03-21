@@ -9,58 +9,38 @@ import {
   Flex,
   Button,
   Box,
-  useToast,
 } from '@chakra-ui/react'
-import { useEffect } from 'react'
 import { useFinishQuestMutation } from '../../features/questlog/questlogApiSlice'
 import Cash from '../../icons/Cash'
 
-const ActiveQuests = ({ questlog }) => {
+const CompletedQuests = ({ questlog }) => {
   // const { data: questlog, isLoading } = useGetQuestlogQuery()
-  const [finishQuest, { error, data }] = useFinishQuestMutation() as any
-  const toast = useToast()
+  // console.log(' QUESTLOG QUEST', questlog)
 
-  useEffect(() => {
-    console.log(' QUESTLOG error', error)
-
-    if (error?.data?.message) {
-      toast({
-        position: 'top-right',
-        status: 'error',
-        title: error.data.message,
-        isClosable: true,
-      })
-    }
-    if (data?.message) {
-      toast({
-        position: 'top-right',
-        status: 'success',
-        title: data.message,
-        isClosable: true,
-      })
-    }
-  }, [error, data])
-
+  console.log(
+    'questlog?.data?.completedQuests',
+    questlog?.data?.completedQuests
+  )
   return (
-    <Accordion defaultIndex={0}>
-      {questlog?.data?.activeQuests?.map((activeQuest) => {
-        const requiredItems = activeQuest.requiredItems
+    <Accordion>
+      {questlog?.data?.completedQuests?.map((completedQuest) => {
+        const requiredItems = completedQuest.requiredItems
 
         return (
           <AccordionItem>
             <h2>
               <AccordionButton>
                 <Box as='span' fontWeight={'bold'} flex='1' textAlign='left'>
-                  {activeQuest.name}
+                  {completedQuest.name}
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <Text>{activeQuest.description}</Text>
+              <Text>{completedQuest.description}</Text>
               <Stack spacing={4}>
-                <Box marginBottom={6}>
-                  <Text textAlign={'left'}>Wymagane:</Text>
+                <Box>
+                  <Text>Wymagane:</Text>
                   {requiredItems.map((item) => {
                     return (
                       <Box
@@ -87,18 +67,10 @@ const ActiveQuests = ({ questlog }) => {
                 </Box>
                 <Flex alignItems={'center'}>
                   <Text marginRight={2}>
-                    Nagroda: {activeQuest.rewardMoney}{' '}
+                    Nagroda: {completedQuest.rewardMoney}{' '}
                   </Text>
                   <Cash />
                 </Flex>
-                <Button
-                  alignSelf={'flex-end'}
-                  variant={'outline'}
-                  colorScheme='teal'
-                  onClick={() => finishQuest(activeQuest._id)}
-                >
-                  Zakończ quest
-                </Button>
               </Stack>
             </AccordionPanel>
           </AccordionItem>
@@ -220,4 +192,4 @@ const ActiveQuests = ({ questlog }) => {
   )
 }
 
-export default ActiveQuests
+export default CompletedQuests

@@ -7,10 +7,12 @@ import {
   Box,
   Heading,
   Text,
+  SimpleGrid,
   Flex,
   Avatar,
   Button,
   Badge,
+  useToast,
   Grid,
   Spinner,
   useDisclosure,
@@ -25,24 +27,34 @@ import woodenBg from 'images/woodenbg.png'
 import Enemy from '../../Enemy'
 import PlayerBadge from '../../PlayerBadge'
 import Quest01 from './Quest-01'
+import Quest02 from './Quest-02'
 import { useGetQuestlogQuery } from '../../../features/questlog/questlogApiSlice'
+import { useStartBattleMutation } from '../../../features/battlelog/battlelogApiSlice'
 import { Quest } from '../../../features/questlog/Quest'
 import { motion } from 'framer-motion'
+import { useGetEnemiesQuery } from '../../../features/enemy/enemyApiSlice'
 // const isActiveQuest = (questlog) => {
 
 // }
 
 const ForgottenForest = () => {
-  const [enemy, setEnemy] = useState(null)
+  // const [enemy, setEnemy] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenDialogue,
     onOpen: onOpenDialogue,
     onClose: onCloseDialogue,
   } = useDisclosure()
+  const toast = useToast()
 
-  const { data: player, isLoading } = useGetCurrentPlayerQuery()
-  const { data: questlog } = useGetQuestlogQuery()
+  const { data: player, refetch, isLoading } = useGetCurrentPlayerQuery()
+  const { data: questlog, isLoading: isQuestlogLoading } = useGetQuestlogQuery()
+  const [startBattle, { isLoading: isBattleLoading, error, data: enemy }] =
+    useStartBattleMutation() as any
+  const { data: enemyData, isLoading: isEnemiesLoading } =
+    useGetEnemiesQuery('forgotten-forest')
+
+  console.log('enemyData', enemyData)
 
   const hasQuest = (questId) => {
     return (
@@ -50,99 +62,61 @@ const ForgottenForest = () => {
     )
   }
 
-  console.log('DATA QUEST', hasQuest(Quest.NA_POCZATKU_BYLO_DRZEWO))
+  const hasQuestCompleted = (questId) => {
+    return (
+      questlog?.data?.completedQuests?.findIndex((el) => el._id === questId) !==
+      -1
+    )
+  }
 
-  const handleFight = (enemy: any) => {
-    setEnemy(enemy)
+  console.log('enemy', enemy)
+
+  const handleFight = (enemyId: number) => {
+    startBattle(enemyId)
+    // const enemyFindToREMOVE = enemyData.find((el) => el._id === enemyId)
+    // setEnemy(data?.data?.enemy)
     onOpen()
+  }
+
+  const handleClose = () => {
+    refetch()
+    onClose()
   }
 
   const handleTalk = (npc: any) => {
     onOpenDialogue()
   }
 
-  if (isLoading) return <h1>LOADING</h1>
+  if (error) {
+    toast({
+      title: error?.data?.message ?? 'Nie mozna zacząć walki',
+      position: 'top-right',
+      status: 'error',
+      isClosable: true,
+    })
+  }
 
-  const enemyData = [
-    {
-      experience: 40,
-      maxMoney: 12,
-      loot: [
-        { id: 0, chance: 30 },
-        { id: '63e96737ecbb4c981ca98882', chance: 70 },
-      ],
-      name: 'Dzika Świnia',
-      health_points: 20,
-      max_health_points: 20,
-      level: 1,
-      power: 10,
-      image: '/monsters/cursed-pig-transparent.png',
-      type: 'normal',
-      damage: 33,
-      isDisabled: player.data.healthPoints === 0,
-    },
-    {
-      experience: 50,
-      maxMoney: 20,
-      loot: [
-        { id: 0, chance: 30 },
-        { id: '63e96737ecbb4c981ca98882', chance: 70 },
-      ],
-      name: 'Wiewiór',
-      health_points: 30,
-      max_health_points: 30,
-      level: 2,
-      power: 15,
-      image: '/monsters/squirrel-transparent.png',
-      type: 'normal',
-      damage: 33,
-      isDisabled: player.data.healthPoints === 0,
-    },
-    {
-      experience: 40,
-      maxMoney: 12,
-      loot: [
-        { id: 0, chance: 30 },
-        { id: '63e96737ecbb4c981ca98882', chance: 70 },
-      ],
-      name: 'Dzika2',
-      health_points: 20,
-      max_health_points: 20,
-      level: 1,
-      power: 10,
-      image: '/monsters/cursed-pig-transparent.png',
-      type: 'fire',
-      damage: 33,
-      isDisabled: player.data.healthPoints === 0,
-    },
-    {
-      experience: 40,
-      maxMoney: 12,
-      loot: [
-        { id: 0, chance: 30 },
-        { id: '63e96737ecbb4c981ca98882', chance: 70 },
-      ],
-      name: 'Dzika Świnia3',
-      health_points: 20,
-      max_health_points: 20,
-      level: 1,
-      power: 10,
-      image: '/monsters/cursed-pig-transparent.png',
-      type: 'normal',
-      damage: 33,
-      isDisabled: player.data.healthPoints === 0,
-    },
-  ]
+  if (isLoading || isEnemiesLoading) return <h1>LOADING</h1>
+
+  console.log('ENEMYDAT', enemyData)
 
   let content
+  let quest
+
   switch (true) {
-    case !hasQuest(Quest.NA_POCZATKU_BYLO_DRZEWO):
-      content = <Quest01 />
+    case !hasQuest(Quest.NA_POCZATKU_BYLO_DRZEWO) &&
+      !hasQuestCompleted(Quest.NA_POCZATKU_BYLO_DRZEWO):
+      quest = <Quest01 />
+      break
+    case !hasQuest(Quest.PRZEKLĘTE_WIEWIÓRKI) &&
+      hasQuestCompleted(Quest.NA_POCZATKU_BYLO_DRZEWO) &&
+      !hasQuestCompleted(Quest.PRZEKLĘTE_WIEWIÓRKI):
+      quest = <Quest02 />
       break
     default:
       content = (
         <>
-          {enemyData.map((enemy, i) => {
+          {enemyData?.data?.map((el, i) => {
             return (
               <motion.div
                 initial={{ opacity: 0, y: 50, scale: 0.3 }}
@@ -158,7 +132,12 @@ const ForgottenForest = () => {
                 }}
                 transition={{ delay: i / 10 }}
               >
-                <Enemy fight={handleFight} {...enemy} />
+                <Enemy
+                  isBattleLoading={isBattleLoading}
+                  fight={() => handleFight(el._id)}
+                  isDisabled={player.data.healthPoints === 0}
+                  {...el}
+                />
               </motion.div>
             )
           })}
@@ -175,75 +154,50 @@ const ForgottenForest = () => {
       textAlign='center'
       fontSize='xl'
     >
-      <Grid
-        maxW='full'
-        backgroundColor={'rgba(12,12,12, 0.8)'}
-        margin='0 auto'
-        p={12}
-        minH='100vh'
-        position={'relative'}
-        // background={'white'}
-        // _after={{
-        //   content: "''",
-        //   height: '20px',
-        //   width: '100%',
-        //   position: 'absolute',
-        //   top: '-20px',
-        //   transform: 'rotate(180deg)',
-        //   left: '0',
-        //   background:
-        //     'url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/rip.svg) bottom',
-        //   backgroundSsize: '150%',
+      {quest ? (
+        quest
+      ) : (
+        <SimpleGrid
+          maxW='full'
+          backgroundColor={'rgba(12,12,12, 0.8)'}
+          margin='0 auto'
+          p={12}
+          minH='100vh'
+          position={'relative'}
+          // background={'white'}
+          // _after={{
+          //   content: "''",
+          //   height: '20px',
+          //   width: '100%',
+          //   position: 'absolute',
+          //   top: '-20px',
+          //   transform: 'rotate(180deg)',
+          //   left: '0',
+          //   background:
+          //     'url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/rip.svg) bottom',
+          //   backgroundSsize: '150%',
 
-        //MOONLIT KINGDOM
-        // }}
-      >
-        <PlayerBadge />
-        <Flex mt={'auto'} gap={10}>
-          {content}
-        </Flex>
-      </Grid>
-      {isOpen && enemy && (
+          //MOONLIT KINGDOM
+          // }}
+        >
+          <PlayerBadge />
+          <Heading fontSize={'5xl'}>Zapomniany las</Heading>
+          <SimpleGrid gap={10} columns={{ base: 1, md: 2, lg: 4 }}>
+            {/* <Flex flexWrap={'wrap'} mt={'auto'} gap={10}> */}
+            {content}
+          </SimpleGrid>
+          {/* </Flex> */}
+        </SimpleGrid>
+      )}
+      {isOpen && enemy?.data?.enemy && (
         <Battle
+          enemyId={enemy?.data?.enemy._id}
           isBattleOpen={isOpen}
           playerData={player?.data}
-          enemyData={enemy}
-          onClose={onClose}
+          enemyData={enemy?.data?.enemy}
+          onClose={handleClose}
         />
       )}
-
-      {/* <Modal
-  size={'xl'}
-  onClose={onClose}
-  isOpen={isOpen}
-  scrollBehavior='inside'
->
-  <ModalOverlay />
-  <ModalContent>
-    <ModalHeader>FIGHT!</ModalHeader>
-    <ModalCloseButton />
-    <ModalBody>
-      <div>
-        {battleLogs.map((log, i) => {
-          // <Text fontSize='sm' pb={2}>
-          // setTimeout(() => {}, 0)
-          console.log('battleLogs', battleLogs)
-          console.log('i', i)
-          return i === battleLogs.length - 1 ? (
-            <Heading mt={5}>{log}</Heading>
-          ) : (
-            <Text fontSize={'sm'} color={i % 2 === 0 ? 'green' : 'red'}>
-              {log}
-            </Text>
-          )
-        })}
-      </div>
-    </ModalBody>
-    <ModalFooter>
-      <Button onClick={onClose}>Close</Button>
-    </ModalFooter>
-  </ModalContent>
-</Modal> */}
     </Box>
   ) : null
 }

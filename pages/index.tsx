@@ -78,6 +78,7 @@ export default function Home() {
             <Text
               as={'span'}
               position={'relative'}
+              fontFamily={'MedievalSharp, cursive'}
               _after={{
                 content: "''",
                 width: 'full',
@@ -91,7 +92,7 @@ export default function Home() {
             >
               The End Of Days
             </Text>
-            <Badge m={3} variant='outline' colorScheme='green'>
+            <Badge padding={'2'} m={3} variant='outline' colorScheme='green'>
               beta
             </Badge>
             <br />{' '}

@@ -8,7 +8,10 @@ import {
   Stack,
   Link,
   Button,
+  Avatar,
   Heading,
+  Radio,
+  RadioGroup,
   Text,
   useColorModeValue,
   useToast,
@@ -27,7 +30,7 @@ function RadioCard(props) {
   const checkbox = getCheckboxProps()
 
   return (
-    <Box as='label'>
+    <Box flex={1} as='label'>
       <input {...input} />
       <Box
         {...checkbox}
@@ -45,6 +48,9 @@ function RadioCard(props) {
         }}
         px={5}
         py={3}
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
       >
         {props.children}
       </Box>
@@ -56,6 +62,9 @@ const Signup = () => {
   const [email, setEmail] = useState('')
   const [playerName, setPlayerName] = useState('')
   const [password, setPassword] = useState('')
+  const [sex, setSex] = useState('male')
+  const [race, setRace] = useState('human')
+
   const toast = useToast()
   const router = useRouter()
 
@@ -63,8 +72,6 @@ const Signup = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
-
-    console.log('JKJKJKJK')
 
     if (!password || !email || !playerName) {
       return toast({
@@ -79,6 +86,8 @@ const Signup = () => {
         email,
         playerName,
         password,
+        race: race,
+        avatar: `/avatars/${race}-${sex === 'male' ? 'm' : 'f'}.png`,
       }).unwrap()
       toast({
         title: data.message,
@@ -103,10 +112,11 @@ const Signup = () => {
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'race',
     defaultValue: 'human',
-    onChange: console.log,
+    onChange: (val) => setRace(val),
   })
 
   const group = getRootProps()
+  console.log('group()', group)
 
   return (
     <Box
@@ -136,8 +146,8 @@ const Signup = () => {
             // width='md'
             width={['auto', 'md']}
           >
-            <Stack spacing={4}>
-              <form onSubmit={submitHandler}>
+            <form onSubmit={submitHandler}>
+              <Stack spacing={2}>
                 <FormControl id='email' isRequired>
                   <FormLabel>Adres email</FormLabel>
                   <Input
@@ -152,6 +162,14 @@ const Signup = () => {
                     onChange={(e) => setPlayerName(e.target.value)}
                   />
                 </FormControl>
+                <FormControl id='sex' isRequired>
+                  <RadioGroup onChange={setSex} value={sex}>
+                    <Stack direction='row'>
+                      <Radio value='male'>Mężczyzna</Radio>
+                      <Radio value='female'>Kobieta</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
                 <FormControl id='race'>
                   <FormLabel>Rasa</FormLabel>
                   <HStack {...group}>
@@ -159,7 +177,18 @@ const Signup = () => {
                       const radio = getRadioProps({ value })
                       return (
                         <RadioCard key={value} {...radio}>
-                          {value}
+                          {value === 'human' && 'Człowiek'}
+                          {value === 'elf' && 'Elf'}
+                          {value === 'orc' && 'Ork'}
+                          <Avatar
+                            marginTop={2}
+                            size={'lg'}
+                            bgColor={'gray.900'}
+                            src={`/avatars/${value}-${
+                              sex === 'male' ? 'm' : 'f'
+                            }.png`}
+                            border={'2px solid #fff'}
+                          />
                         </RadioCard>
                       )
                     })}
@@ -196,8 +225,8 @@ const Signup = () => {
                     Załóż konto
                   </Button>
                 </Stack>
-              </form>
-            </Stack>
+              </Stack>
+            </form>
           </Box>
         </Stack>
       </Flex>

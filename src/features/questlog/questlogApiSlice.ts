@@ -14,7 +14,19 @@ export const questlogApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Questlog'],
     }),
+    finishQuest: builder.mutation<any, any>({
+      query: (questId) => ({
+        url: `/questlog/finishQuest`,
+        method: 'POST',
+        body: { questId },
+      }),
+      invalidatesTags: ['Questlog', 'Player', 'Inventory'],
+    }),
   }),
 })
 
-export const { useGetQuestlogQuery, useStartQuestMutation } = questlogApiSlice
+export const {
+  useGetQuestlogQuery,
+  useStartQuestMutation,
+  useFinishQuestMutation,
+} = questlogApiSlice

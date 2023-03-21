@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import woodenBg from '../assets/woodenbg.png'
 import PlayerBadge from '../PlayerBadge'
 import Cash from '../../icons/Cash'
+import CompletedQuests from './CompletedQuests'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
 import {
@@ -30,7 +31,7 @@ const Quests = () => {
 
   console.log(' QUESTLOG QUEST', questlog)
 
-  return (
+  return !!questlog && !!player ? (
     <Box
       backgroundImage={'/images/inventory-bg2.png'}
       backgroundSize='100%'
@@ -59,14 +60,14 @@ const Quests = () => {
               <ActiveQuests questlog={questlog} />
             </TabPanel>
             <TabPanel>
-              <p>two!</p>
+              <CompletedQuests questlog={questlog} />
             </TabPanel>
           </TabPanels>
         </Tabs>
       </Box>
       <IntroTutorial shouldBeVisible={player?.data?.tutorial === 3} />
     </Box>
-  )
+  ) : null
 }
 
 export default Quests

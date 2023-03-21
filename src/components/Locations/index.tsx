@@ -8,6 +8,7 @@ import {
   Heading,
   Text,
   CardFooter,
+  SimpleGrid,
   Button,
 } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -28,8 +29,9 @@ const Locations = () => {
       backgroundPosition={'center'}
       textAlign='center'
       fontSize='xl'
+      height='100vh'
     >
-      <Grid
+      <SimpleGrid
         maxW='full'
         backgroundColor={'rgba(12,12,12, 0.85)'}
         margin='0 auto'
@@ -120,7 +122,7 @@ const Locations = () => {
             </CardFooter>
           </Stack>
         </Card> */}
-      </Grid>
+      </SimpleGrid>
       <IntroTutorial shouldBeVisible={data?.data?.tutorial === 2} />
     </Box>
   )
