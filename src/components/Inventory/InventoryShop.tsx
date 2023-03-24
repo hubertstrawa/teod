@@ -117,8 +117,8 @@ const InventoryShop = () => {
       </Flex>
       <Flex justifyContent={'space-between'}>
         <Grid
-          gridTemplateColumns={'repeat(6, 60px)'}
-          gridTemplateRows={'repeat(6, 60px)'}
+          gridTemplateColumns={'repeat(7, 60px)'}
+          gridTemplateRows={'repeat(5, 60px)'}
           // boxShadow={'inset 0 0 10px #000'}
           gridGap={2}
           padding={10}
@@ -126,7 +126,7 @@ const InventoryShop = () => {
         >
           {inventory.all.map((invItem) => {
             return Object.keys(invItem.item).length > 0 ? (
-              <GridItem border='2px solid #654321' width='60px' height='60px'>
+              <GridItem border='2px solid #654321' width='100%' height='100%'>
                 <Popover>
                   <PopoverTrigger>
                     <div
@@ -135,7 +135,8 @@ const InventoryShop = () => {
                         width: '100%',
                         height: '100%',
                         margin: '0',
-                        border: '2px solid #654321',
+                        padding: '5px',
+                        borderRadius: '2px',
                       }}
                     >
                       <img
@@ -222,7 +223,7 @@ const InventoryShop = () => {
         )} */}
           {playerInventory.all.map((invItem) => {
             return Object.keys(invItem.item).length > 0 ? (
-              <GridItem border='2px solid #654321' width='60px' height='60px'>
+              <GridItem border='2px solid #654321' width='100%' height='100%'>
                 <Popover>
                   <PopoverTrigger>
                     <div
@@ -231,11 +232,11 @@ const InventoryShop = () => {
                         width: '100%',
                         height: '100%',
                         margin: '0',
-                        border: '2px solid #654321',
+                        padding: '5px',
                       }}
                     >
                       <img
-                        // style={{ width: '100%', height: '100%' }}
+                        style={{ width: '100%', height: '100%' }}
                         src={invItem.item.image}
                         alt={invItem.item.name}
                       />
@@ -294,8 +295,8 @@ const InventoryShop = () => {
               <GridItem
                 border='2px solid #654321'
                 background='rgba(81, 54, 26, 0.3)'
-                width='60px'
-                height='60px'
+                width='100%'
+                height='100%'
               ></GridItem>
             )
           })}

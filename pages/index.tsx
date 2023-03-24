@@ -1,6 +1,7 @@
 // @ts-nocheck
 import Head from 'next/head'
 import { useState } from 'react'
+import { socketInitializer } from './_app'
 import Link from 'next/link'
 import {
   FormControl,
@@ -33,6 +34,27 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentToken } from '../src/features/auth/authSlice'
 import { useLoginMutation } from '../src/features/auth/authApiSlice'
 
+// let socket
+// const socketInitializer = async () => {
+//   // We just call it because we don't need anything else out of it
+//   // await fetch("/api/socket");
+
+//   // socket = io();
+//   socket = io('http://localhost:3003')
+
+//   socket.on('response', (data) => {
+//     console.log('RESPONSE DATA', data)
+//   })
+// }
+
+// export const sendMessage = (msg) => {
+//   socket.emit('message', {
+//     sender: 'player.data.playerName',
+//     level: 'player.data.level',
+//     text: msg,
+//   })
+// }
+
 export default function Home() {
   const dispatch = useDispatch()
   const token = useSelector(selectCurrentToken)
@@ -56,6 +78,7 @@ export default function Home() {
       }).unwrap()
       if (accessToken) {
         dispatch(setCredentials({ accessToken }))
+        // await socketInitializer()
         console.log(email, password)
         router.push('/game')
       }
