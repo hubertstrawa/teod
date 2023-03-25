@@ -1,42 +1,60 @@
 import { io } from 'socket.io-client'
 import { useDispatch, useSelector } from 'react-redux'
-import { addMessage } from '../features/chat/chatSlice'
+import { addMessage, setOnlineCount } from '../features/chat/chatSlice'
 import { selectCurrentToken } from '../features/auth/authSlice'
 import { useEffect } from 'react'
 
 let socket
 
 export const sendMessage = async (data) => {
+  console.log('data', data)
+  console.log('socket', socket)
   if (!!socket) await socket.emit('message', data)
 }
 
 const SocketInit = ({ children }: any) => {
   const token = useSelector(selectCurrentToken)
   const dispatch = useDispatch()
+  console.log('token', token)
 
   const socketInitializer = async () => {
-    socket = io('https://api.teod.pl')
+    console.log('NEXT_SOCKET_URL', process.env.NEXT_PUBLIC_SOCKET)
+    const url = process.env.NEXT_PUBLIC_SOCKET
+      ? `${process.env.NEXT_PUBLIC_SOCKET}`
+      : `https://api.teod.pl`
+
+    socket = io(url, {
+      auth: {
+        token,
+      },
+    })
+
+    console.log('socket', socket)
+
+    socket.on('joined_game', (dataStr) => {
+      dispatch(addMessage(dataStr))
+    })
 
     socket.on('response', (data) => {
       dispatch(addMessage(data))
-      // let messages: any = sessionStorage.getItem('messages')
+    })
 
-      // if (!messages) {
-      //   messages = []
-      // } else {
-      //   messages = JSON.parse(messages)
-      // }
-
-      // const newMessage = data
-      // messages.push(newMessage)
-
-      // const messagesString = JSON.stringify(messages)
-      // sessionStorage.setItem('messages', messagesString)
+    socket.on('online_players', (data) => {
+      dispatch(setOnlineCount(data))
     })
   }
 
+  // socket.on('error', async (error) => {
+  //   if(error === 'TOKEN_EXPIRED'){
+  //     const newToken = token;
+  //     socket.close();
+  //     socketInitializer()
+  //   }
+
   useEffect(() => {
-    if (!!token && !socket) socketInitializer()
+    console.log('socket USEE', socket)
+    console.log('token USEE', token)
+    if (!!token) socketInitializer()
   }, [token])
 
   return children

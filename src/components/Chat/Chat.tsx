@@ -1,4 +1,4 @@
-import { Box, Button, Text, Input, Flex } from '@chakra-ui/react'
+import { Box, Button, Text, Input, Flex, Badge } from '@chakra-ui/react'
 import io from 'socket.io-client'
 // import { sendMessage } from '../../../pages/_app'
 import { sendMessage } from '../SocketInit'
@@ -7,6 +7,7 @@ import { addMessage } from '../../features/chat/chatSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store'
 import { useGetCurrentPlayerQuery } from '../../features/player/playerApiSlice'
+import { GiAbstract013 } from 'react-icons/gi'
 import { useRef } from 'react'
 import { useRouter } from 'next/router'
 
@@ -25,11 +26,16 @@ const Chat = () => {
   const dispatch = useDispatch()
 
   const data = useSelector((state: RootState) => state.chat.messages)
+  const onlinePlayers = useSelector(
+    (state: RootState) => state.chat.onlineCount
+  )
+
   console.log('DATA', data)
 
   const addNewMessage = () => {
     // dispatch(addMessage({ auth: 'ja', text: msg }))
     if (!!inputRef.current.value) {
+      console.log('msg add', inputRef)
       sendMessage({
         author: `${player.data.playerName} [Lvl ${player.data.level}]`,
         text: inputRef.current.value,
@@ -37,35 +43,60 @@ const Chat = () => {
     }
   }
 
-  // const dataChat =
-  //   typeof sessionStorage !== 'undefined'
-  //     ? JSON.parse(sessionStorage.getItem('messages'))
-  //     : []
+  if (!!chatboxRef?.current?.lastChild) {
+    chatboxRef.current.lastChild.scrollIntoView({
+      behavior: 'smooth',
+      // block: 'end',
+      // inline: 'nearest',
+    })
+  }
 
-  // useEffect(() => {
-  //   setMessages(JSON.parse(sessionStorage.getItem('messages')))
-  // }, [])
+  useEffect(() => {
+    if (!!chatboxRef.current.lastChild) {
+      chatboxRef.current.lastChild.scrollIntoView({
+        behavior: 'smooth',
+        // block: 'end',
+        // inline: 'nearest',
+      })
+    }
+    console.log('chatbox', chatboxRef)
+  }, [data])
 
-  // useEffect(() => {
-  // setMessages(dataChat)
-  // }, [dataChat])
+  console.log('data', data)
 
   // console.log('DATA', JSON.parse(sessionStorage.getItem('messages')))
 
   return (
     <Box padding={4} marginTop={'auto'}>
-      <Box marginBottom={2} height={200} overflowY={'scroll'}>
-        {data?.length &&
-          data.map((el) => {
-            return (
-              <Text wordBreak='break-all' color='yellow' fontSize='sm'>
-                <span style={{ fontSize: '11px', color: '#8B8000' }}>
-                  {el.author}:{' '}
-                </span>
-                <span>{el.text}</span>
-              </Text>
-            )
-          })}
+      <Badge colorScheme='green'>
+        <Text display='inline' fontSize='xs'>
+          online: <strong>{onlinePlayers}</strong>{' '}
+        </Text>
+        <GiAbstract013 style={{ display: 'inline' }} />
+      </Badge>
+      <Box
+        marginTop={4}
+        ref={chatboxRef}
+        marginBottom={2}
+        height={'24vh'}
+        overflowY={'scroll'}
+      >
+        {data?.length
+          ? data.map((el) => {
+              return typeof el === 'string' ? (
+                <Text color='teal' fontSize='xs'>
+                  {el}
+                </Text>
+              ) : (
+                <Text wordBreak='break-all' color='yellow' fontSize='sm'>
+                  <span style={{ fontSize: '11px', color: '#8B8000' }}>
+                    {el.author}:{' '}
+                  </span>
+                  <span>{el.text}</span>
+                </Text>
+              )
+            })
+          : null}
       </Box>
       <form
         onSubmit={(e) => {

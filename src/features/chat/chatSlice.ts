@@ -4,10 +4,12 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface ChatSlice {
   messages: any
+  onlineCount: number
 }
 
 const initialState: ChatSlice = {
   messages: [],
+  onlineCount: 0,
 }
 
 export const chatSlice = createSlice({
@@ -19,8 +21,11 @@ export const chatSlice = createSlice({
 
       state.messages = [...state.messages, data]
     },
+    setOnlineCount: (state, action) => {
+      state.onlineCount = action.payload
+    },
   },
 })
 
-export const { addMessage } = chatSlice.actions
+export const { addMessage, setOnlineCount } = chatSlice.actions
 export default chatSlice.reducer
