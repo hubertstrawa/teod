@@ -7,8 +7,6 @@ import { useEffect } from 'react'
 let socket
 
 export const sendMessage = async (data) => {
-  console.log('data', data)
-  console.log('socket', socket)
   if (!!socket) await socket.emit('message', data)
 }
 

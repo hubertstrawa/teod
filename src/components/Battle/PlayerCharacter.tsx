@@ -9,22 +9,31 @@ const PlayerCharacter = ({
   isLoading,
   playerDodge,
 }: any) => {
-  const healthPercent = (100 * healthPoints) / maxHealthPoints
+  // const healthPercent = (100 * healthPoints) / maxHealthPoints
   const [enemyHit, setEnemyHit] = useState(0)
   const [dodge, setDodge] = useState(null)
+  const [healthPercent, setHealthPercent] = useState(
+    (100 * healthPoints) / maxHealthPoints
+  )
 
   console.log('ISLOADINGINGING', isLoading)
 
   useEffect(() => {
-    setEnemyHit(enemyAttackValue)
-    setDodge(playerDodge)
-
     const timer = setTimeout(() => {
+      setEnemyHit(enemyAttackValue)
+      setDodge(playerDodge)
+      setHealthPercent((100 * healthPoints) / maxHealthPoints)
+    }, 900)
+
+    const timerIns = setTimeout(() => {
       setEnemyHit(0)
       setDodge(0)
-    }, 700)
+    }, 1800)
 
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(timerIns)
+    }
   }, [enemyAttackValue])
 
   // console.log('enemyHIT', enemyHit)
@@ -35,8 +44,10 @@ const PlayerCharacter = ({
         {enemyHit > 0 ? (
           <Text
             as={motion.p}
+            fontFamily='heading'
             position={'absolute'}
-            top={-8}
+            fontSize='2xl'
+            top={-10}
             initial={{
               left: 0,
             }}
@@ -44,17 +55,11 @@ const PlayerCharacter = ({
               left: 25,
               scale: 1.3,
               opacity: 1,
-              // transition: {
-              //   type: 'spring',
-              //   stiffness: 150,
-              //   delay: 3,
-              //   duration: 2,
-              // },
             }}
             exit={{ left: 75, scale: 0, opacity: 0 }}
             margin={'auto'}
             textAlign={'center'}
-            color={'red'}
+            color={'#FFCCCB'}
             display={'flex'}
           >
             - {enemyHit} HP
@@ -85,6 +90,7 @@ const PlayerCharacter = ({
         {!!dodge && (
           <Text
             as={motion.p}
+            fontFamily='heading'
             top={-12}
             initial={{ left: 0 }}
             animate={{ left: 25, scale: 1.3, opacity: 1 }}
@@ -110,16 +116,18 @@ const PlayerCharacter = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            padding={3}
           >
             <Progress
               isIndeterminate={isLoading}
               colorScheme='green'
-              size={'sm'}
+              size={'md'}
               value={healthPercent}
             />
+
             <Image
-              width='100px'
-              height='100px'
+              // width='100px'
+              // height='100px'
               src={'/images/warrior-no-bg.png'}
             />
           </Box>

@@ -17,6 +17,7 @@ import {
   ModalFooter,
   Button,
   keyframes,
+  Stack,
   Container,
 } from '@chakra-ui/react'
 import { useMemo } from 'react'
@@ -63,8 +64,11 @@ const Battle = ({
 }: BattleProps) => {
   const [attackEnemy, { isLoading: isLoadingAttack, data: dataAttack }] =
     useAttackEnemyMutation()
+  const [buttonDisabled, setButtonDisabled] = useState(false)
 
   const toast = useToast()
+
+  console.log('playerDATA', playerData)
 
   console.log('enemyData', enemyData)
   const [trigger, result, lastPromiseInfo] = useLazyGetInventoryQuery()
@@ -85,13 +89,22 @@ const Battle = ({
 
   const { healthPoints, maxHealthPoints } = playerData
 
-  const playerAttack = (attackType: string) => {
-    if (attackType === AttackType.NORMAL) {
-      attackEnemy(AttackType.NORMAL)
+  const playerAttack = (spell: any) => {
+    console.log('spell', spell)
+    setButtonDisabled(true)
+    if (spell === AttackType.NORMAL) {
+      attackEnemy({ spellType: 'normal' })
     }
-    if (attackType === AttackType.FIRE) {
-      attackEnemy(AttackType.FIRE)
+    if (spell.spellType === AttackType.FIRE) {
+      attackEnemy(spell)
     }
+    if (spell.spellType === AttackType.ELECTRIC) {
+      attackEnemy(spell)
+    }
+    const mytimer = setTimeout(() => {
+      setButtonDisabled(false)
+    }, 2000)
+    return () => clearInterval(mytimer)
   }
 
   const container = {
@@ -121,14 +134,18 @@ const Battle = ({
 
   return (
     <Modal
-      size={'xl'}
+      size={'4xl'}
       onClose={dataAttack?.data?.current?.isOver ? onClose : () => {}}
       isOpen={isBattleOpen}
       scrollBehavior='inside'
     >
-      <ModalOverlay background={'rgba(0,0,0, 0.85)'} />
-      <ModalContent>
-        <ModalHeader padding={3} display={'flex'}>
+      <ModalOverlay background={'rgba(10,10,10, 0.95)'} />
+      <ModalContent marginTop={10} height='100%'>
+        <ModalHeader
+          background={'rgba(0,0,0, 0.5)'}
+          padding={3}
+          display={'flex'}
+        >
           <Avatar
             size={'md'}
             src={enemyData?.image}
@@ -154,18 +171,19 @@ const Battle = ({
               {/* <span style={{ margin: '0 5px' }}>|</span>
                 {manaPoints} <ManaIcon style={{ marginLeft: '5px' }} /> */}
             </Text>
+            <ModalCloseButton disabled={!dataAttack?.data?.current?.isOver} />
           </Box>
         </ModalHeader>
-        <ModalCloseButton disabled={!dataAttack?.data?.current?.isOver} />
         <ModalBody
           backgroundImage={'/images/background22.png'}
-          backgroundSize='cover'
+          backgroundSize='100%'
+          backgroundPosition={'90%'}
           padding={0}
           height='100%'
           minH={'lg'}
           overflow='hidden'
         >
-          <Box backgroundColor={'rgba(10,10,10, 0.55)'}>
+          <Box height='100%' backgroundColor={'rgba(10,10,10, 0.6)'}>
             {dataAttack?.data?.current?.isOver && (
               <Container
                 minH={200}
@@ -174,19 +192,18 @@ const Battle = ({
                 background='rgba(0,10,0, 0.8)'
                 // borderRadius={50}
                 width='100%'
+                maxWidth='100%'
                 height='calc(100% - 62px)'
                 padding={30}
                 position={'absolute'}
-                as={motion.div}
-                variants={container}
-                initial='hidden'
-                paddingTop={5}
+                // variants={container}
+                paddingTop={10}
                 // display='flex'
                 // justifyContent={'center'}
                 // alignItems='center'
                 flexDir='column'
                 textAlign={'center'}
-                animate='visible'
+                // animate='visible'
               >
                 <Box
                   bgImage={'/images/scroll-bg.svg'}
@@ -196,28 +213,42 @@ const Battle = ({
                   minHeight={250}
                   display='flex'
                   flexDir={'column'}
+                  width='100%'
                   justifyContent='center'
                   alignItems='center'
                   color='gray.800'
+                  as={motion.div}
+                  initial={{ y: -100, scale: 1.3, opacity: 0 }}
+                  animate={{ y: 0, scale: 1, opacity: 1 }}
                 >
-                  <Heading color='green'>
+                  <Heading
+                    color={
+                      dataAttack?.data?.current?.isOver &&
+                      dataAttack?.data?.current.playerHealthPoints > 0
+                        ? 'green'
+                        : 'red'
+                    }
+                  >
                     {dataAttack?.data?.current?.isOver &&
                     dataAttack?.data?.current.playerHealthPoints > 0
                       ? 'WYGRANA'
                       : 'PRZEGRANA'}
                   </Heading>
-                  <Box
-                    display={'flex'}
-                    width='150px'
-                    justifyContent={'space-between'}
-                  >
-                    <Text as={motion.p} variants={item}>
-                      +{dataAttack?.data?.current?.gainedExp} EXP
-                    </Text>
-                    <Text as={motion.p} variants={item}>
-                      +{dataAttack?.data?.current?.gainedGold} $ 💰
-                    </Text>
-                  </Box>
+                  {dataAttack?.data?.current?.isOver &&
+                  dataAttack?.data?.current.playerHealthPoints > 0 ? (
+                    <Box
+                      display={'flex'}
+                      width='150px'
+                      justifyContent={'space-between'}
+                    >
+                      <Text as={motion.p} variants={item}>
+                        +{dataAttack?.data?.current?.gainedExp} EXP
+                      </Text>
+                      <Text as={motion.p} variants={item}>
+                        +{dataAttack?.data?.current?.gainedGold} $ 💰
+                      </Text>
+                    </Box>
+                  ) : null}
                   {/* <Text as={motion.p} variants={item}>
                     Zdobyto:
                   </Text> */}
@@ -228,22 +259,31 @@ const Battle = ({
                       mt={5}
                       display={'flex'}
                       alignItems={'center'}
+                      flexDirection={'column'}
                       variants={item}
                     >
-                      <Text>
-                        Zdobyto{' '}
-                        <strong>
-                          {dataAttack?.data?.current?.lootedItem?.name}
-                        </strong>
-                      </Text>
-                      <img
-                        style={{
-                          marginLeft: '5px',
-                          width: '20px',
-                          height: '20px',
-                        }}
-                        src={dataAttack?.data?.current?.lootedItem?.image}
-                      />
+                      <Box display='flex' alignItems={'center'}>
+                        <Text>
+                          Zdobyto{' '}
+                          <strong>
+                            {dataAttack?.data?.current?.lootedItem?.name}{' '}
+                          </strong>
+                        </Text>
+                        <Image
+                          style={{
+                            marginLeft: '5px',
+                            width: '20px',
+                            height: '20px',
+                          }}
+                          src={dataAttack?.data?.current?.lootedItem?.image}
+                        />
+                      </Box>
+                      {dataAttack?.data?.current?.lootedItem.state ===
+                      'rare' ? (
+                        <Text color='teal.900' fontWeight='bold' fontSize='sm'>
+                          * rzadki *
+                        </Text>
+                      ) : null}
                     </Box>
                   )}
                 </Box>
@@ -259,9 +299,10 @@ const Battle = ({
               gridTemplateRows={'repeat(5, 1fr)'}
               gridTemplateColumns={'repeat(5, 1fr)'}
               gap='1'
-              padding={4}
+              padding={10}
               // minH={'lg'}
-              maxH={'xl'}
+              height='100%'
+              // maxH={'xl'}
               color='blackAlpha.700'
               fontWeight='bold'
             >
@@ -301,40 +342,103 @@ const Battle = ({
               </GridItem>
             </Grid>
           </Box>
-          <Box bottom={5} left={5} position='absolute'>
-            <Button
-              isDisabled={dataAttack?.data?.current?.isOver}
-              mr={2}
-              onClick={() => playerAttack(AttackType.NORMAL)}
-            >
-              Atak zwykły
-            </Button>
-            <Button
-              isDisabled={dataAttack?.data?.current?.isOver}
-              onClick={() => playerAttack(AttackType.FIRE)}
-            >
-              Ratata 🔥
-            </Button>
+          <Box>
+            <AnimatePresence>
+              {!buttonDisabled && !dataAttack?.data?.current?.isOver ? (
+                <Box
+                  as={motion.div}
+                  initial={{
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                  bottom={5}
+                  right={5}
+                  padding={4}
+                  position='absolute'
+                  bgColor='rgba(0,0,0, 0.7)'
+                  display='flex'
+                  borderRadius={10}
+                  flexDirection='column'
+                >
+                  <Text
+                    marginBottom={4}
+                    textAlign={'center'}
+                    fontFamily='heading'
+                    fontSize='lg'
+                  >
+                    Umiejętności
+                  </Text>
+                  <Stack spacing={3} fontFamily='heading' fontSize='md'>
+                    <Button
+                      isDisabled={
+                        dataAttack?.data?.current?.isOver || buttonDisabled
+                      }
+                      mr={2}
+                      variant='outline'
+                      width='full'
+                      onClick={() => playerAttack(AttackType.NORMAL)}
+                    >
+                      Atak zwykły
+                    </Button>
+                    {playerData.spells.map((spell) => {
+                      return (
+                        <Button
+                          variant='outline'
+                          width='full'
+                          isDisabled={
+                            dataAttack?.data?.current?.isOver ||
+                            buttonDisabled ||
+                            playerData.manaPoints < spell.manaCost
+                          }
+                          onClick={() => playerAttack(spell)}
+                        >
+                          {spell.name}
+                        </Button>
+                      )
+                    })}
+                  </Stack>
+                </Box>
+              ) : (
+                <Heading>Tura przeciwnika</Heading>
+              )}
+            </AnimatePresence>
           </Box>
         </ModalBody>
-        {/* <ModalFooter>
-          <Text opacity={0.5} mr={5}>
+        {/* <ModalFooter
+          bgColor='rgba(0,0,0, 0.5)'
+          display='flex'
+          flexDirection={'column'}
+        >
+          <Heading opacity={0.5} mr={5}>
             Umiejętności:
-          </Text>
-          <Box mr={'auto'}>
+          </Heading>
+          <Box>
             <Button
-              disabled={isBattleOver || !isPlayerTurn}
+              fontFamily='heading'
+              isDisabled={dataAttack?.data?.current?.isOver}
               mr={2}
               onClick={() => playerAttack(AttackType.NORMAL)}
             >
               Atak zwykły
             </Button>
-            <Button
-              disabled={isBattleOver || !isPlayerTurn}
-              onClick={() => playerAttack(AttackType.FIRE)}
-            >
-              Ratata 🔥
-            </Button>
+            {playerData.spells.map((spell) => {
+              return (
+                <Button
+                  isDisabled={dataAttack?.data?.current?.isOver}
+                  onClick={() => playerAttack(spell)}
+                >
+                  {spell.name} 🔥
+                </Button>
+              )
+            })}
           </Box>
         </ModalFooter> */}
       </ModalContent>

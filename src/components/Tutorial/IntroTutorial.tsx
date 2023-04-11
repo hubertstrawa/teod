@@ -9,6 +9,8 @@ import {
   Button,
   useDisclosure,
   Text,
+  UnorderedList,
+  ListItem,
   Image,
   Flex,
 } from '@chakra-ui/react'
@@ -60,24 +62,24 @@ const IntroTutorial = ({ shouldBeVisible }) => {
             justifyContent={'space-between'}
             alignItems='center'
           >
-            <Text>Początki bywają trudne</Text>
+            <Text fontFamily='heading'>Początki bywają trudne</Text>
             <Text fontSize={'sm'}>{player?.data?.tutorial}/4</Text>
           </DrawerHeader>
 
           {player?.data?.tutorial === 1 && (
             <DrawerBody>
               <Flex height={'100%'} direction={'column'}>
-                <Text marginBottom={2}>
+                <Text marginBottom={4}>
                   Witaj, {player?.data?.playerName}. Nazywam się Helperra i dam
                   Ci kilka wskazówek na początek przygody z TEOD.{' '}
                 </Text>
                 <Text>
                   Aby zacząć przejdź do zakładki{' '}
-                  <span style={{ fontWeight: 'bold' }}>Eksploracja</span>.
-                  Znajdziesz tam lokacje, które mozesz odwiedzić. Niektóre z
+                  <span style={{ fontWeight: 'bold' }}>Polowanie</span>.
+                  Znajdziesz tam lokacje, które możesz odwiedzić. Niektóre z
                   nich odblokują się automatycznie po osiągnięciu konkretnego
-                  poziomu, niektóre odblokujesz po zakończeniu konkretnego
-                  zadania lub po opłaceniu przepustki.
+                  poziomu, niektóre odblokujesz kluczami, które zdobędziesz po
+                  zakończeniu zadania lub zabiciu bossa.
                 </Text>
                 <Button onClick={next} marginTop='auto' colorScheme='blue'>
                   Dalej
@@ -90,13 +92,21 @@ const IntroTutorial = ({ shouldBeVisible }) => {
             <DrawerBody>
               <Flex height={'100%'} direction={'column'}>
                 <Text marginBottom={2}>
-                  W kazdej lokacji znajdziesz potwory, które posiadają moc
-                  zywiołów takie jak{' '}
-                  <span style={{ fontWeight: 'bold' }}>
-                    ataki fizyczne, elektryczne, ogniste i wodne
-                  </span>
-                  . Przed walką wybieraj ekwipunek lub czary z danego zywiolu,
-                  aby zadawać jak największe obrazenia przeciwnikowi.
+                  W każdej lokacji znajdziesz potwory, które posiadają moce
+                  żywiołów:
+                </Text>
+                <UnorderedList marginBottom={2}>
+                  <ListItem>ataki fizyczne</ListItem>
+                  <ListItem>ogniste</ListItem>
+                  <ListItem>wodniste</ListItem>
+                  <ListItem>elektryczne</ListItem>
+                </UnorderedList>
+                <Text marginBottom={'auto'}>
+                  Typ przeciwnika wpływa na to ile obrażeń zadasz z danego
+                  żywiołu. Jeśli rzucisz zaklęcie od wody w elektrycznego
+                  przeciwnika, zadasz mu podwójne obrażenia, natomiast rzucając
+                  zaklęcie ogniste na wodnego przeciwnika zadasz mu tylko połowę
+                  obrażeń. Neutralne żywioły zadają normalne obrażenia.
                 </Text>
                 <Text>
                   Aby rozpocząć pierwszą misję przejdź do lokacji{' '}
@@ -117,12 +127,17 @@ const IntroTutorial = ({ shouldBeVisible }) => {
                   W zakładce <span style={{ fontWeight: 'bold' }}>Zadania</span>{' '}
                   znajdziesz aktywne oraz zakończone zadania.
                 </Text>
-                <Text>
+                <Text marginBottom={2}>
                   Czas upolować kilka świń, aby podziomek Alberta nie zjadł
                   kolejnego dziecka, ale najpierw przejdź do zakładki{' '}
-                  <span style={{ fontWeight: 'bold' }}>Ekwipunek</span> i załóz
-                  kurtkę. Aby załozyć przedmiot kliknij na niego i wybierz opcję
-                  załóz.
+                  <span style={{ fontWeight: 'bold' }}>Ekwipunek</span> i załóż
+                  pancerz.
+                </Text>
+                <Text>
+                  W każdej lokacji możesz także przyjmować opcjonalne zlecenia
+                  na zabicie określonej ilości potworów danego gatunku. Po
+                  zakończeniu zlecenia będziesz mieć możliwość{' '}
+                  <strong>walki z bossem</strong>.
                 </Text>
                 <Button onClick={next} marginTop='auto' colorScheme='blue'>
                   Dalej
@@ -135,8 +150,8 @@ const IntroTutorial = ({ shouldBeVisible }) => {
             <DrawerBody>
               <Flex height={'100%'} direction={'column'}>
                 <Text marginBottom={2}>
-                  No i pięknie. Teraz musisz radzić sobie sam. Przejdź do
-                  zakładki{' '}
+                  No i pięknie. Teraz musisz radzić sobie sam. Aby zacząć
+                  polowanie przejdź do zakładki{' '}
                   <span style={{ fontWeight: 'bold' }}>Eksploracja</span> i
                   wybierz{' '}
                   <span style={{ fontWeight: 'bold' }}>Zapomniany las</span>.

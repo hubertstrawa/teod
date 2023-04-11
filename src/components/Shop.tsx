@@ -1,10 +1,11 @@
 import Inventory from './Inventory/Inventory'
-import { Box, Grid, Spinner } from '@chakra-ui/react'
+import { Box, Grid, Spinner, Heading } from '@chakra-ui/react'
 import { RootState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import woodenBg from '../assets/woodenbg.png'
 import PlayerBadge from './PlayerBadge'
 import { useGetCurrentPlayerQuery } from '../features/player/playerApiSlice'
+import { GiShop } from 'react-icons/gi'
 import InventoryShop from './Inventory/InventoryShop'
 
 const Shop = () => {
@@ -12,10 +13,10 @@ const Shop = () => {
 
   return !!data ? (
     <Box
-      backgroundImage={'/images/inventory-bg2.png'}
+      backgroundImage={'/images/woodenbg.png'}
       backgroundSize='100%'
       backgroundRepeat={'no-repeat'}
-      backgroundPosition={'center'}
+      backgroundPosition={'top'}
       textAlign='center'
       fontSize='xl'
     >
@@ -28,6 +29,15 @@ const Shop = () => {
         position={'relative'}
       >
         <PlayerBadge />
+        <Heading
+          display='flex'
+          justifyContent={'center'}
+          // alignItems='center'
+          // marginTop={2}
+        >
+          <GiShop style={{ marginRight: '10px' }} />
+          Sklep wielobranżowy
+        </Heading>
         <InventoryShop />
       </Grid>
     </Box>

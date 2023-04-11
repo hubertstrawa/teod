@@ -43,8 +43,11 @@ import {
   GiTrumpetFlag,
   GiTreasureMap,
   GiShoppingBag,
+  GiFairyWand,
   GiAbstract076,
   GiTalk,
+  GiShop,
+  GiShoppingCart,
 } from 'react-icons/gi'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import Chat from './Chat/Chat'
@@ -58,8 +61,9 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   // { name: 'Home', icon: FiHome, url: '/game' },
   { name: 'Profil', icon: GiTrumpetFlag, url: '/game' },
-
-  { name: 'Eksploracja', icon: GiTreasureMap, url: '/game/explore' },
+  { name: 'Polowanie', icon: GiTreasureMap, url: '/game/explore' },
+  { name: 'Księga Czarów', icon: GiFairyWand, url: '/game/magic-book' },
+  { name: 'Poszukiwania', icon: GiTreasureMap, url: '/game/treasures' },
   {
     name: 'Ekwipunek',
     icon: GiBackpack,
@@ -69,7 +73,7 @@ const LinkItems: Array<LinkItemProps> = [
   // { name: 'Fragmenty', icon: FiMap },
   // { name: 'Praca', icon: FiClock },
 
-  { name: 'Sklep', icon: GiShoppingBag, url: '/game/shop' },
+  { name: 'Sklep', icon: GiShop, url: '/game/shop' },
   { name: 'Ranking', icon: FiTrendingUp, url: '/game/highscores' },
 
   // { name: 'Market', icon: FiStar, url: '/game/market' },
@@ -100,9 +104,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p='4'>
-        {children}
-      </Box>
+      <Box ml={{ base: 0, md: 60 }}>{children}</Box>
     </Box>
   )
 }
@@ -160,6 +162,10 @@ interface NavItemProps extends FlexProps {
   children: any
 }
 const NavItem = ({ icon, to, children, ...rest }: NavItemProps) => {
+  console.log('window.location.href', window.location.href)
+  console.log('to', to)
+  const path = window?.location?.pathname?.split('/')[2]
+
   return to ? (
     <Link
       href={to}
@@ -172,10 +178,16 @@ const NavItem = ({ icon, to, children, ...rest }: NavItemProps) => {
         mx='4'
         borderRadius='lg'
         role='group'
+        // textUnderlineOffset={}
         cursor='pointer'
+        boxShadow={
+          to.includes(path) || window?.location?.pathname === to
+            ? 'inset rgba(20, 200, 150, 0.2) 0px 7px 29px 0px;'
+            : 'none'
+        }
         _hover={{
           // bg: 'cyan.400',
-          bg: 'gray.800',
+          bg: 'rgba(0,0,0, 0.1)',
           color: 'white',
         }}
         {...rest}

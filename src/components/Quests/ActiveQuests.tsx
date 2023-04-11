@@ -3,6 +3,7 @@ import {
   Text,
   AccordionItem,
   AccordionButton,
+  Heading,
   AccordionPanel,
   AccordionIcon,
   Stack,
@@ -43,67 +44,91 @@ const ActiveQuests = ({ questlog }) => {
 
   return (
     <Accordion defaultIndex={0}>
-      {questlog?.data?.activeQuests?.map((activeQuest) => {
-        const requiredItems = activeQuest.requiredItems
+      {questlog?.data?.activeQuests.length > 0 ? (
+        questlog?.data?.activeQuests?.map((activeQuest) => {
+          const requiredItems = activeQuest.requiredItems.reduce(
+            (acc, curr) => {
+              const itemFindIndex = acc.findIndex((el) => el._id === curr._id)
 
-        return (
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
+              if (itemFindIndex !== -1) {
+                acc[itemFindIndex].amount = acc[itemFindIndex].amount + 1
+                return acc
+              }
+
+              acc.push({ ...curr, amount: 1 })
+              return acc
+            },
+            []
+          )
+
+          return (
+            <AccordionItem>
+              <AccordionButton py={4}>
                 <Box as='span' fontWeight={'bold'} flex='1' textAlign='left'>
-                  {activeQuest.name}
+                  <Heading fontSize='xl'>{activeQuest.name} </Heading>
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <Text>{activeQuest.description}</Text>
-              <Stack spacing={4}>
-                <Box marginBottom={6}>
-                  <Text textAlign={'left'}>Wymagane:</Text>
-                  {requiredItems.map((item) => {
-                    return (
-                      <Box
-                        // as={motion.div}
-                        mt={5}
-                        display={'flex'}
-                        alignItems={'center'}
-                        // variants={item}
-                      >
-                        <Text>
-                          1x <strong>{item.name} </strong>
-                        </Text>
-                        <img
-                          style={{
-                            marginLeft: '5px',
-                            width: '20px',
-                            height: '20px',
-                          }}
-                          src={item.image}
-                        />
-                      </Box>
-                    )
-                  })}
-                </Box>
-                <Flex alignItems={'center'}>
-                  <Text marginRight={2}>
-                    Nagroda: {activeQuest.rewardMoney}{' '}
-                  </Text>
-                  <Cash />
-                </Flex>
-                <Button
-                  alignSelf={'flex-end'}
-                  variant={'outline'}
-                  colorScheme='teal'
-                  onClick={() => finishQuest(activeQuest._id)}
-                >
-                  Zakończ quest
-                </Button>
-              </Stack>
-            </AccordionPanel>
-          </AccordionItem>
-        )
-      })}
+              <AccordionPanel pb={4}>
+                <Text marginBottom={8} textAlign={'left'}>
+                  {activeQuest.description}
+                </Text>
+                <Stack spacing={4}>
+                  <Box marginBottom={6}>
+                    <Text fontFamily='heading' textAlign={'left'}>
+                      Wymagania:
+                    </Text>
+                    {requiredItems.map((item) => {
+                      return (
+                        <Box
+                          // as={motion.div}
+                          mt={1}
+                          display={'flex'}
+                          alignItems={'center'}
+                          // variants={item}
+                        >
+                          <Text>
+                            {item.amount}x <strong>{item.name} </strong>
+                          </Text>
+                          <img
+                            style={{
+                              marginLeft: '8px',
+                              width: '26px',
+                              height: '26px',
+                            }}
+                            src={item.image}
+                          />
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                  <Flex alignItems={'center'}>
+                    <Text
+                      fontFamily='heading'
+                      alignItems='center'
+                      marginRight={2}
+                    >
+                      Nagroda:
+                    </Text>
+                    <Text> {activeQuest.rewardMoney} </Text>
+                    <Cash />
+                  </Flex>
+                  <Button
+                    alignSelf={'flex-end'}
+                    variant={'outline'}
+                    colorScheme='purple'
+                    onClick={() => finishQuest(activeQuest._id)}
+                  >
+                    Zakończ quest
+                  </Button>
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          )
+        })
+      ) : (
+        <Text>Brak aktywnych questów</Text>
+      )}
       {/* <AccordionItem>
         <h2>
           <AccordionButton>

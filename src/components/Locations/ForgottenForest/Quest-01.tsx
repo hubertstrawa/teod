@@ -19,8 +19,14 @@ const Quest01 = () => {
   const [step, setStep] = useState(1)
   const router = useRouter()
   const toast = useToast()
+  const { data: player } = useGetCurrentPlayerQuery()
   const [updatePlayer] = useUpdateCurrentPlayerMutation()
   const [updateQuestlog] = useStartQuestMutation()
+
+  const isMale = (str) => {
+    return str.split('-')[1].startsWith('m')
+  }
+
   useEffect(() => {
     if (step === 2) {
       toast({
@@ -82,13 +88,10 @@ const Quest01 = () => {
                   lineHeight={1.6}
                   fontSize={{ base: 'xl', lg: '2xl' }}
                 >
-                  O, bastard jednak żyje, obudziłeś się.. *drapie się po czole*
-                  - szkoda. Z drugiej strony -{' '}
-                  <span style={{ color: 'gray' }}>
-                    *przygląda się z irytacją*{' '}
-                  </span>
-                  - wyglądasz jak wyschnięta jaszczurka, podziomek pewnie by Cię
-                  nie tknął. Włóż te szmaty, nie mogę na Ciebie patrzeć.
+                  O, jednak się{' '}
+                  {isMale(player?.data?.avatar) ? 'obudziłeś' : 'obudziłaś'}
+                  .. Szkoda. Z drugiej strony - wyglądasz jak wyschnięta
+                  jaszczurka, podziomek pewnie by Cię nie tknął.
                 </Text>
                 <Button onClick={() => setStep(step + 1)} width={'100%'}>
                   Gdzie jestem?
@@ -103,13 +106,19 @@ const Quest01 = () => {
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
                 as={motion.div}
+                width='full'
                 bgColor='rgba(45,55,72, 0.75)'
                 padding={{ base: 6, lg: 10 }}
                 position='relative'
                 borderRadius={20}
                 border={'5px solid #f7f7f7'}
               >
-                <Text marginBottom={2} color={'gray.400'} align={'left'}>
+                <Text
+                  marginBottom={2}
+                  color={'gray.400'}
+                  align={'left'}
+                  fontFamily='heading'
+                >
                   Albert:
                 </Text>
                 <Text
@@ -118,9 +127,7 @@ const Quest01 = () => {
                   lineHeight={1.6}
                   fontSize={{ base: 'xl', lg: '2xl' }}
                 >
-                  Rozejrzyj się, tu niczego nie ma. *spogląda na boki z
-                  uśmiechniętą miną* - Zgrywam się tylko. Na początku było
-                  drzewo.
+                  Rozejrzyj się, na początku było drzewo.
                 </Text>
                 <Button onClick={() => setStep(step + 1)} width={'100%'}>
                   A co jest teraz?
@@ -136,12 +143,18 @@ const Quest01 = () => {
                 exit={{ scale: 0 }}
                 as={motion.div}
                 bgColor='rgba(45,55,72, 0.75)'
+                width='full'
                 padding={{ base: 6, lg: 10 }}
                 position='relative'
                 borderRadius={20}
                 border={'5px solid #f7f7f7'}
               >
-                <Text marginBottom={2} color={'gray.400'} align={'left'}>
+                <Text
+                  fontFamily='heading'
+                  marginBottom={2}
+                  color={'gray.400'}
+                  align={'left'}
+                >
                   Albert:
                 </Text>
                 <Text
@@ -150,12 +163,10 @@ const Quest01 = () => {
                   lineHeight={1.6}
                   fontSize={{ base: 'xl', lg: '2xl' }}
                 >
-                  Więcej drzew. A co ma być? Gówno jest. Moonlit pogrążony w
-                  płaczu, królestwo zajęte, mamy tylko miecze, zioła i wino.
-                  Skąd się wziąłeś?
+                  Więcej drzew. A co ma być? Gówno jest. Straciliśmy wszystko.
                 </Text>
                 <Button onClick={() => setStep(step + 1)} width={'100%'}>
-                  Nie pamiętam
+                  Kim jesteś.. co ja tu robię?
                 </Button>
               </Box>
             </AnimatePresence>
@@ -173,7 +184,12 @@ const Quest01 = () => {
                 borderRadius={20}
                 border={'5px solid #f7f7f7'}
               >
-                <Text marginBottom={2} color={'gray.400'} align={'left'}>
+                <Text
+                  marginBottom={2}
+                  color={'gray.400'}
+                  align={'left'}
+                  fontFamily='heading'
+                >
                   Albert:
                 </Text>
                 <Text
@@ -182,13 +198,9 @@ const Quest01 = () => {
                   lineHeight={1.6}
                   fontSize={{ base: 'xl', lg: '2xl' }}
                 >
-                  {/* Kamienie z nowej ery mogłyby załatać, ale - *zbliża się do
-                    Ciebie delikatnie obwąchując* - groszem nie śmierdzisz.  */}
-                  Co mam z Tobą zrobić, bastardzie? Umiesz upolować wilczura?
-                  Jam obłożony słabością, a mój podziomek głodny.. *kręci głową*
-                  - sukinsyn zjadł kolejne dziecko z namiotu. Kilka kawałków
-                  mięsa powinno mu wystarczyć, na dzisiaj. Idź już i przynieś mi
-                  5 kawałków surowego mięsa.
+                  Nie czas na to. Jam schorowany a podziomek głodny.. Sukinsyn
+                  zjadł kolejne dziecko z namiotu. Kilka kawałków mięsa powinno
+                  mu wystarczyć. Idź już i przynieś mi 3 kawałki surowego mięsa.
                 </Text>
                 <Button onClick={submitIntro} width={'100%'}>
                   Dalej

@@ -9,6 +9,7 @@ import {
   Flex,
   Button,
   Box,
+  Heading,
 } from '@chakra-ui/react'
 import { useFinishQuestMutation } from '../../features/questlog/questlogApiSlice'
 import Cash from '../../icons/Cash'
@@ -24,40 +25,54 @@ const CompletedQuests = ({ questlog }) => {
   return (
     <Accordion>
       {questlog?.data?.completedQuests?.map((completedQuest) => {
-        const requiredItems = completedQuest.requiredItems
+        const requiredItems = completedQuest.requiredItems.reduce(
+          (acc, curr) => {
+            const itemFindIndex = acc.findIndex((el) => el._id === curr._id)
 
+            if (itemFindIndex !== -1) {
+              acc[itemFindIndex].amount = acc[itemFindIndex].amount + 1
+              return acc
+            }
+
+            acc.push({ ...curr, amount: 1 })
+            return acc
+          },
+          []
+        )
         return (
           <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box as='span' fontWeight={'bold'} flex='1' textAlign='left'>
-                  {completedQuest.name}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
+            <AccordionButton py={4}>
+              <Box as='span' fontWeight={'bold'} flex='1' textAlign='left'>
+                <Heading fontSize='xl'>{completedQuest.name} </Heading>
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
             <AccordionPanel pb={4}>
-              <Text>{completedQuest.description}</Text>
+              <Text marginBottom={8} textAlign={'left'}>
+                {completedQuest.description}
+              </Text>{' '}
               <Stack spacing={4}>
-                <Box>
-                  <Text>Wymagane:</Text>
+                <Box marginBottom={6}>
+                  <Text fontFamily='heading' textAlign={'left'}>
+                    Wymagania:
+                  </Text>
                   {requiredItems.map((item) => {
                     return (
                       <Box
                         // as={motion.div}
-                        mt={5}
+                        mt={1}
                         display={'flex'}
                         alignItems={'center'}
                         // variants={item}
                       >
                         <Text>
-                          1x <strong>{item.name} </strong>
+                          {item.amount}x <strong>{item.name} </strong>
                         </Text>
                         <img
                           style={{
-                            marginLeft: '5px',
-                            width: '20px',
-                            height: '20px',
+                            marginLeft: '8px',
+                            width: '26px',
+                            height: '26px',
                           }}
                           src={item.image}
                         />

@@ -2,10 +2,10 @@ import { apiSlice } from '../api/apiSlice'
 
 export const battlelogApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    // getbattle: builder.query<any, void>({
-    //   query: () => `/battle/startBattle`,
-    //   providesTags: ['Battlelog'],
-    // }),
+    getBattlelog: builder.query<any, void>({
+      query: () => `/battlelog/getBattlelog`,
+      providesTags: ['Battlelog'],
+    }),
     startBattle: builder.mutation<any, any>({
       query: (enemyId) => ({
         url: `/battlelog/startBattle`,
@@ -15,15 +15,18 @@ export const battlelogApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ['Battlelog'],
     }),
     attackEnemy: builder.mutation<any, any>({
-      query: (attackType) => ({
+      query: (spell) => ({
         url: `/battlelog/attackEnemy`,
         method: 'POST',
-        body: { attackType },
+        body: { spell },
       }),
       invalidatesTags: ['Battlelog'],
     }),
   }),
 })
 
-export const { useStartBattleMutation, useAttackEnemyMutation } =
-  battlelogApiSlice
+export const {
+  useGetBattlelogQuery,
+  useStartBattleMutation,
+  useAttackEnemyMutation,
+} = battlelogApiSlice

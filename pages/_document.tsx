@@ -15,6 +15,9 @@ export default function Document() {
         <GlobalLoader />
         <Main />
         <NextScript />
+        {/* <audio controls autoPlay>
+          <source src='/Netherplace.mp3' type='audio/mp3' />
+        </audio> */}
       </body>
     </Html>
   )

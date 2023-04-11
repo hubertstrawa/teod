@@ -11,6 +11,7 @@ import {
   Accordion,
   Text,
   AccordionItem,
+  Heading,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
@@ -19,6 +20,7 @@ import {
   Box,
   Grid,
 } from '@chakra-ui/react'
+import { GiTalk } from 'react-icons/gi'
 
 import ActiveQuests from './ActiveQuests'
 import { useGetQuestlogQuery } from '../../features/questlog/questlogApiSlice'
@@ -50,10 +52,24 @@ const Quests = () => {
         position={'relative'}
       >
         <PlayerBadge />
-        <Tabs marginTop={16} size='md' variant='enclosed'>
-          <TabList>
-            <Tab>Aktywne questy</Tab>
-            <Tab>Zakończone questy</Tab>
+        <Heading
+          display='flex'
+          justifyContent={'center'}
+          alignItems='center'
+          marginTop={10}
+        >
+          <GiTalk style={{ marginRight: '10px' }} />
+          Zadania
+        </Heading>
+
+        <Tabs marginTop={4} colorScheme={'teal'} variant='line'>
+          <TabList marginBottom={4}>
+            <Tab paddingY={3}>
+              <Heading fontSize='xl'>Aktywne zadania</Heading>
+            </Tab>
+            <Tab paddingY={3}>
+              <Heading fontSize='xl'>Zakończone zadania</Heading>
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel>

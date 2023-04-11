@@ -17,6 +17,29 @@ export const playerApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Player'],
     }),
+    startJob: builder.mutation<any, any>({
+      query: (locationName) => ({
+        url: `/player/startJob`,
+        method: 'POST',
+        body: { locationName },
+      }),
+      invalidatesTags: ['Player'],
+    }),
+    finishJob: builder.mutation<any, any>({
+      query: (locationName) => ({
+        url: `/player/finishJob`,
+        method: 'POST',
+        body: { locationName },
+      }),
+      invalidatesTags: ['Player', 'Inventory'],
+    }),
+    closeJob: builder.mutation<any, void>({
+      query: () => ({
+        url: `/player/closeJob`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Player'],
+    }),
     updateCurrentPlayer: builder.mutation<any, any>({
       query: (data) => ({
         url: `/player/updateMe`,
@@ -33,4 +56,7 @@ export const {
   useGetPlayersHighscoresQuery,
   useUpdateCurrentPlayerMutation,
   useAddAttributeMutation,
+  useStartJobMutation,
+  useFinishJobMutation,
+  useCloseJobMutation,
 } = playerApiSlice

@@ -30,8 +30,6 @@ const Chat = () => {
     (state: RootState) => state.chat.onlineCount
   )
 
-  console.log('DATA', data)
-
   const addNewMessage = () => {
     // dispatch(addMessage({ auth: 'ja', text: msg }))
     if (!!inputRef.current.value) {
@@ -78,7 +76,7 @@ const Chat = () => {
         marginTop={4}
         ref={chatboxRef}
         marginBottom={2}
-        height={'24vh'}
+        height={'14vh'}
         overflowY={'scroll'}
       >
         {data?.length

@@ -36,9 +36,6 @@ const Enemy = ({
   isDisabled,
 }: any) => {
   const handleClick = () => {
-    console.log('name', name)
-    console.log('image', image)
-
     fight({
       name,
       experience,
@@ -52,8 +49,6 @@ const Enemy = ({
       maxMoney,
     })
   }
-
-  console.log('type', type)
 
   return (
     <Card
@@ -99,11 +94,11 @@ const Enemy = ({
         <ButtonGroup width={'100%'} spacing='2'>
           <Tooltip
             placement='top-start'
-            label={isDisabled ? 'Nie masz HP. Ulecz się aby móc walczyć' : null}
+            label={isDisabled ? 'Nie jesteś w stanie walczyć..' : null}
             aria-label='A tooltip'
           >
             <Button
-              isDisabled={isDisabled}
+              // isDisabled={isDisabled}
               variant='solid'
               // colorScheme='teal'
               bgColor={'gray.800'}

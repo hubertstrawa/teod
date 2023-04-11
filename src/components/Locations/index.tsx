@@ -5,12 +5,14 @@ import {
   Image,
   Stack,
   CardBody,
+  Flex,
   Heading,
   Text,
   CardFooter,
   SimpleGrid,
   Button,
 } from '@chakra-ui/react'
+import { GiPadlock } from 'react-icons/gi'
 import { motion, AnimatePresence } from 'framer-motion'
 import PlayerBadge from '../PlayerBadge'
 import Link from 'next/link'
@@ -65,8 +67,8 @@ const Locations = () => {
             overflow='hidden'
             variant='outline'
             bgImage={'/images/dark-forest.png'}
-            bgPosition='center'
-            bgPos={'bottom'}
+            bgPos={'center'}
+            bgSize={'cover'}
             marginBottom={10}
           >
             <Stack>
@@ -75,11 +77,13 @@ const Locations = () => {
                   Zapomniany las
                 </Heading>
 
-                <Text py='2'>Zalecany poziom: 1-10</Text>
+                <Text fontSize='lg' py='2'>
+                  Zalecany poziom: 1-15
+                </Text>
               </CardBody>
 
               <CardFooter>
-                <Button variant='solid' colorScheme='blue' padding={0}>
+                <Button variant='solid' colorScheme='teal' padding={0}>
                   <Link
                     style={{
                       height: '40px',
@@ -96,32 +100,62 @@ const Locations = () => {
             </Stack>
           </Card>
         </AnimatePresence>
-        {/* </Link> */}
-        {/* <Card
-          direction={{ base: 'column', sm: 'row' }}
-          overflow='hidden'
-          variant='outline'
-          bgImage={'/images/dark-forest.png'}
-          bgPosition='center'
-          bgPos={'bottom'}
-          marginBottom={10}
-        >
-          <Stack>
-            <CardBody>
-              <Heading textAlign={'left'} size='md'>
-                Zapomniany las
-              </Heading>
+        <AnimatePresence>
+          <Card
+            as={motion.div}
+            initial={{
+              opacity: 0,
+              y: 50,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            direction={{ base: 'column', sm: 'row' }}
+            overflow='hidden'
+            variant='outline'
+            bgImage={'/images/royal-ruins.png'}
+            bgPos={'bottom'}
+            bgSize={'cover'}
+            bgRepeat='no-repeat'
+            marginBottom={10}
+          >
+            <Stack>
+              <CardBody>
+                <Flex alignItems={'center'}>
+                  <Heading marginRight={2} textAlign={'left'} size='md'>
+                    Królewskie ruiny
+                  </Heading>
+                  <GiPadlock />
+                </Flex>
+                <Text fontSize='lg' py='2'>
+                  Zalecany poziom: 15-30
+                </Text>
+              </CardBody>
 
-              <Text py='2'>Zalecany poziom: 1-10</Text>
-            </CardBody>
-
-            <CardFooter>
-              <Button variant='solid' colorScheme='blue'>
-                Przejdź do lokacji
-              </Button>
-            </CardFooter>
-          </Stack>
-        </Card> */}
+              <CardFooter>
+                <Button
+                  isDisabled
+                  variant='solid'
+                  padding={0}
+                  colorScheme='teal'
+                >
+                  <Link
+                    style={{
+                      height: '40px',
+                      padding: '0 16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    href='/game/explore'
+                  >
+                    Przejdź do lokacji
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Stack>
+          </Card>
+        </AnimatePresence>
       </SimpleGrid>
       <IntroTutorial shouldBeVisible={data?.data?.tutorial === 2} />
     </Box>

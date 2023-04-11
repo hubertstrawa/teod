@@ -12,17 +12,32 @@ import {
   Grid,
   GridItem,
   PopoverCloseButton,
+  Avatar,
+  useDisclosure,
+  Box,
+  Heading,
+  PopoverFooter,
   Image,
+  useOutsideClick,
 } from '@chakra-ui/react'
 import styles from './Inventory.module.css'
+import InventoryItem from './InventoryItem'
 import Cash from '../../icons/Cash'
 import InventoryItems from './InventoryItems'
+import { useRef } from 'react'
+import {
+  GiBorderedShield,
+  GiBattleAxe,
+  GiLightBackpack,
+  GiBackpack,
+} from 'react-icons/gi'
 import {
   useGetInventoryQuery,
   useBuyItemTraderMutation,
   useSellItemTraderMutation,
   useGetItemsSellQuery,
 } from '../../features/inventory/inventoryApiSlice'
+import formatNumber from '../../utils/formatNumber'
 import { useGetCurrentPlayerQuery } from '../../features/player/playerApiSlice'
 
 const getInitialInventoryState = () => {
@@ -64,6 +79,8 @@ const InventoryShop = () => {
   const [sellItemMutation] = useSellItemTraderMutation()
   const { data: playerData } = useGetCurrentPlayerQuery()
   const { data: itemsToSell } = useGetItemsSellQuery()
+  console.log('itemstosell', itemsToSell)
+  const ref = useRef()
   console.log('playerdata', playerData)
 
   const { data: playerInventoryDB, isLoading } = useGetInventoryQuery()
@@ -110,197 +127,90 @@ const InventoryShop = () => {
 
   console.log('playerInventory', playerInventory)
   return (
-    <Flex direction='column'>
+    <Flex marginTop={'auto'} flexDirection='column'>
       {/* <Text>Handlarz</Text> */}
-      <Flex>
-        <img width='200px' src={'/characters/trader.png'} />
-      </Flex>
-      <Flex justifyContent={'space-between'}>
-        <Grid
-          gridTemplateColumns={'repeat(7, 60px)'}
-          gridTemplateRows={'repeat(5, 60px)'}
-          // boxShadow={'inset 0 0 10px #000'}
-          gridGap={2}
-          padding={10}
-          bgColor={'rgba(52,34,17, 0.8)'}
-        >
-          {inventory.all.map((invItem) => {
-            return Object.keys(invItem.item).length > 0 ? (
-              <GridItem border='2px solid #654321' width='100%' height='100%'>
-                <Popover>
-                  <PopoverTrigger>
-                    <div
-                      className={styles.box}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        margin: '0',
-                        padding: '5px',
-                        borderRadius: '2px',
-                      }}
-                    >
-                      <img
-                        // style={{ width: '100%', height: '100%' }}
-                        src={invItem.item.image}
-                        alt={invItem.item.name}
-                      />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader fontSize='medium'>
-                      {invItem.item.name}
-                      {invItem.item.type !== 'eat' && (
-                        <Text fontSize='small' fontWeight='bold'>
-                          (atk: {invItem.item.attack} {','} def:{' '}
-                          {invItem.item.defense} )
-                        </Text>
-                      )}
-                    </PopoverHeader>
-                    <PopoverBody>
-                      <Text mb={2} fontSize='small'>
-                        {invItem.item.description}
-                      </Text>
-                      {/* check if item can be equipped */}
-                      <Flex justifyContent={'space-between'}>
-                        <Button
-                          isDisabled={
-                            playerData.data.money < invItem.item.value
-                          }
-                          onClick={() => buyItem(invItem)}
-                        >
-                          Kup
-                        </Button>
-                        <Flex alignItems={'center'}>
-                          <Text>{invItem.item.value}</Text>
-                          <Cash style={{ marginLeft: '3px' }} />
-                        </Flex>
-                      </Flex>
-                      {/* {invItem.item.type === 'eat' && (
-                    <Flex justifyContent={'space-between'}>
-                      <Button onClick={() => eat(invItem)}>Uzyj</Button>
-                      <Flex alignItems={'center'}>
-                        <Text>100</Text>
-                        <Cash style={{ marginLeft: '3px' }} />
-                      </Flex>
-                    </Flex>
-                  )} */}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </GridItem>
-            ) : (
-              <GridItem
-                border='2px solid #654321'
-                background='rgba(81, 54, 26, 0.3)'
-                width='60px'
-                height='60px'
-              ></GridItem>
-            )
-          })}
-        </Grid>
+
+      <Flex
+        justifyContent={'space-between'}
+        flexDirection={{ base: 'column', xl: 'row' }}
+        gap={14}
+      >
+        <Flex flex={1} flexDirection={'column'}>
+          <Flex marginBottom={5}>
+            <Avatar
+              size={'xl'}
+              bgColor={'gray.900'}
+              src={'/characters/trader.png'}
+              border={'2px solid #fff'}
+            />
+            <Box alignSelf='flex-end' textAlign={'left'} paddingLeft={5}>
+              <Heading>Ernesto:</Heading>
+              <Text fontSize='sm' width={9 / 10}>
+                Wsród moich towarów znajdziesz najbardziej wykwintne buteleczki
+                w całym Moonlit. Wszystko jest na sprzedaż.
+              </Text>
+            </Box>
+          </Flex>
+          <Grid
+            gridTemplateColumns={'repeat(auto-fill, minmax(72px, 1fr))'}
+            // gridTemplateColumns={'repeat(7, 60px)'}
+            // gridTemplateRows={'repeat(5, 60px)'}
+            // boxShadow={'inset 0 0 10px #000'}
+            gridGap={2}
+            flex={1}
+            borderRadius={10}
+            padding={8}
+            bgColor={'rgba(52,34,17, 0.8)'}
+          >
+            {inventory.all.map((invItem) => {
+              return <InventoryItem invItem={invItem} buyItem={buyItem} />
+            })}
+          </Grid>
+        </Flex>
         {/* INVENTORY PLAYER */}
-        <Grid
-          gridTemplateColumns={'repeat(7, 70px)'}
-          gridTemplateRows={'repeat(5, 70px)'}
-          boxShadow={'inset 0 0 10px #000'}
-          // boxShadow={'inset 0 0 10px #000'}
-          gridGap={2}
-          padding={10}
-          // bgColor={'rgba(52,34,17, 0.8)'}
-          bgGradient='linear(to-l, gray.700, gray.800)'
-        >
-          {/* {itemsCountInventory && (
-          <GridItem gridColumn={'1/-1'}>
-            <Text align={'right'} fontSize={14}>
-              Pojemność:{' '}
-              <strong>
-                {itemsCountInventory}/{inventory.all.length}
-              </strong>
-            </Text>
-          </GridItem>
-        )} */}
-          {playerInventory.all.map((invItem) => {
-            return Object.keys(invItem.item).length > 0 ? (
-              <GridItem border='2px solid #654321' width='100%' height='100%'>
-                <Popover>
-                  <PopoverTrigger>
-                    <div
-                      className={styles.box}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        margin: '0',
-                        padding: '5px',
-                      }}
-                    >
-                      <img
-                        style={{ width: '100%', height: '100%' }}
-                        src={invItem.item.image}
-                        alt={invItem.item.name}
-                      />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader fontSize='medium'>
-                      {invItem.item.name}
-                      {invItem.item.type !== 'eat' && (
-                        <Text fontSize='small' fontWeight='bold'>
-                          (atk: {invItem.item.attack} {','} def:{' '}
-                          {invItem.item.defense} )
-                        </Text>
-                      )}
-                    </PopoverHeader>
-                    <PopoverBody>
-                      <Text mb={2} fontSize='small'>
-                        {invItem.item.description}
-                      </Text>
-                      <Flex justifyContent={'space-between'}>
-                        <Button onClick={() => sellItem(invItem)}>
-                          Sprzedaj
-                        </Button>
-                        <Flex alignItems={'center'}>
-                          <Text>{Math.round(invItem.item.value * 0.7)}</Text>
-                          <Cash style={{ marginLeft: '3px' }} />
-                        </Flex>
-                      </Flex>
-                      {/* check if item can be equipped */}
-                      {/* {Object.keys(inventory.eq).includes(invItem.item.type) &&
-                      equip && (
-                        <Flex justifyContent={'space-between'}>
-                          <Button onClick={() => equip(invItem)}>Zaloz</Button>
-                          <Flex alignItems={'center'}>
-                            <Text>100</Text>
-                            <Cash style={{ marginLeft: '3px' }} />
-                          </Flex>
-                        </Flex>
-                      )}
-                    {invItem.item.type === 'eat' && eat && (
-                      <Flex justifyContent={'space-between'}>
-                        <Button onClick={() => eat(invItem)}>Uzyj</Button>
-                        <Flex alignItems={'center'}>
-                          <Text>100</Text>
-                          <Cash style={{ marginLeft: '3px' }} />
-                        </Flex>
-                      </Flex>
-                    )} */}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </GridItem>
-            ) : (
-              <GridItem
-                border='2px solid #654321'
-                background='rgba(81, 54, 26, 0.3)'
-                width='100%'
-                height='100%'
-              ></GridItem>
-            )
-          })}
-        </Grid>
+        <Flex flex={1} flexDirection='column'>
+          <Flex marginBottom={5} justifyContent={'space-between'}>
+            <Box textAlign={'left'} alignSelf='flex-end'>
+              <Heading
+                bgGradient='linear(to-r, gray.100, gray.300)'
+                bgClip='text'
+              >
+                Sprzedaj
+              </Heading>
+              <Text alignSelf='flex-end' fontFamily='heading' fontSize={'md'}>
+                Wartość u handlarza: <strong>70%</strong>
+              </Text>
+            </Box>
+            <Flex alignItems={'center'}>
+              <GiLightBackpack
+                style={{
+                  display: 'block',
+                  fontSize: '60px',
+                  marginRight: '10px',
+                }}
+              />
+
+              <Avatar
+                size={'xl'}
+                bgColor={'gray.900'}
+                src={playerData?.data?.avatar}
+                border={'2px solid #fff'}
+              />
+            </Flex>
+          </Flex>
+          <Grid
+            flex={1}
+            gridTemplateColumns={'repeat(auto-fill, minmax(72px, 1fr))'}
+            borderRadius={10}
+            gridGap={2}
+            bgGradient='linear(to-l, gray.700, gray.800)'
+            padding={8}
+          >
+            {playerInventory.all.map((invItem) => {
+              return <InventoryItem invItem={invItem} sellItem={sellItem} />
+            })}
+          </Grid>
+        </Flex>
       </Flex>
     </Flex>
   )

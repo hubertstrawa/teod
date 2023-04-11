@@ -73,11 +73,13 @@ const Quest02 = () => {
                   lineHeight={1.6}
                   fontSize={{ base: 'xl', lg: '2xl' }}
                 >
-                  O, udało się! Teraz znajdź skradziony kubeł na wodę, ukradła
-                  mi go jakaś wiewiórka.
+                  Prawdę mówiąc myślałem, że polegniesz w boju i podziomek
+                  będzie miał prawdziwą ucztę. Skoro jednak Ci się udało..
+                  Szykuję boski napar, ale wataha cholernych wiewiórek skradła
+                  jeden pojemnik z Yajé. Dasz rade go odzyskać?
                 </Text>
                 <Button onClick={submitIntro} width={'100%'}>
-                  Dalej
+                  Sprobuję
                 </Button>
               </Box>
             </AnimatePresence>

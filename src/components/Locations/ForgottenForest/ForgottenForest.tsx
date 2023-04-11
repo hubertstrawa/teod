@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Battle from '../../Battle/Battle'
 import wolfSrc from 'images/wolf.png'
 import dragonSrc from 'images/dragon.png'
@@ -17,6 +17,7 @@ import {
   Spinner,
   useDisclosure,
 } from '@chakra-ui/react'
+import { GiPirateFlag } from 'react-icons/gi'
 import { RootState } from '../../../store'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -26,6 +27,7 @@ import {
 import woodenBg from 'images/woodenbg.png'
 import Enemy from '../../Enemy'
 import PlayerBadge from '../../PlayerBadge'
+import Tasks from '../../Tasks'
 import Quest01 from './Quest-01'
 import Quest02 from './Quest-02'
 import { useGetQuestlogQuery } from '../../../features/questlog/questlogApiSlice'
@@ -41,9 +43,9 @@ const ForgottenForest = () => {
   // const [enemy, setEnemy] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
-    isOpen: isOpenDialogue,
-    onOpen: onOpenDialogue,
-    onClose: onCloseDialogue,
+    isOpen: isOpenTasks,
+    onOpen: onOpenTasks,
+    onClose: onCloseTasks,
   } = useDisclosure()
   const toast = useToast()
 
@@ -83,19 +85,6 @@ const ForgottenForest = () => {
     onClose()
   }
 
-  const handleTalk = (npc: any) => {
-    onOpenDialogue()
-  }
-
-  if (error) {
-    toast({
-      title: error?.data?.message ?? 'Nie mozna zacząć walki',
-      position: 'top-right',
-      status: 'error',
-      isClosable: true,
-    })
-  }
-
   if (isLoading || isEnemiesLoading) return <h1>LOADING</h1>
 
   console.log('ENEMYDAT', enemyData)
@@ -118,27 +107,33 @@ const ForgottenForest = () => {
         <>
           {enemyData?.data?.map((el, i) => {
             return (
-              <motion.div
-                initial={{ opacity: 0, y: 50, scale: 0.3 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.5,
-                  transition: { duration: 0.2 },
-                }}
-                transition={{ delay: i / 10 }}
-              >
-                <Enemy
-                  isBattleLoading={isBattleLoading}
-                  fight={() => handleFight(el._id)}
-                  isDisabled={player.data.healthPoints === 0}
-                  {...el}
-                />
-              </motion.div>
+              el.monsterType !== 'boss' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 50, scale: 0.3 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.5,
+                    transition: { duration: 0.2 },
+                  }}
+                  transition={{ delay: i / 10 }}
+                >
+                  <Enemy
+                    isBattleLoading={isBattleLoading}
+                    fight={() => handleFight(el._id)}
+                    isDisabled={
+                      player.data.healthPoints === 0 ||
+                      !!player.data.activeJob ||
+                      player.energy < 5
+                    }
+                    {...el}
+                  />
+                </motion.div>
+              )
             )
           })}
         </>
@@ -181,7 +176,23 @@ const ForgottenForest = () => {
           // }}
         >
           <PlayerBadge />
-          <Heading fontSize={'5xl'}>Zapomniany las</Heading>
+          <Flex>
+            <Heading fontSize={'5xl'}>Zapomniany las </Heading>
+            <Button
+              variant='outline'
+              colorScheme={'teal'}
+              marginLeft='auto'
+              size='lg'
+              display='flex'
+              onClick={onOpenTasks}
+            >
+              <Heading marginRight={2} size='md'>
+                Zlecenia
+              </Heading>{' '}
+              <GiPirateFlag />
+            </Button>
+          </Flex>
+
           <SimpleGrid gap={10} columns={{ base: 1, md: 2, lg: 4 }}>
             {/* <Flex flexWrap={'wrap'} mt={'auto'} gap={10}> */}
             {content}
@@ -198,6 +209,13 @@ const ForgottenForest = () => {
           onClose={handleClose}
         />
       )}
+      {isOpenTasks ? (
+        <Tasks
+          isOpen={isOpenTasks}
+          onClose={onCloseTasks}
+          handleFight={handleFight}
+        />
+      ) : null}
     </Box>
   ) : null
 }

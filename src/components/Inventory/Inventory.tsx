@@ -6,7 +6,7 @@ import {
   useEquipItemMutation,
   useUnequipItemMutation,
 } from '../../features/inventory/inventoryApiSlice'
-
+import { GiBattleAxe, GiBorderedShield } from 'react-icons/gi'
 import { useEffect, useState } from 'react'
 import Statistics from '../Statistics'
 import InventoryItems from './InventoryItems'
@@ -46,7 +46,17 @@ const Inventory = ({ data }: any) => {
     return Object.keys(curr?.item).length > 0 ? acc + 1 : acc
   }, 0)
 
-  console.log('invenDB', inventoryDB)
+  const eqPlayerAttack = Object.keys(inventory.eq).reduce((acc, curr) => {
+    return inventory.eq[curr]?.attack ? acc + inventory.eq[curr].attack : acc
+  }, 5)
+
+  const eqPlayerDefense = Object.keys(inventory.eq).reduce((acc, curr) => {
+    return inventory.eq[curr]?.defense ? acc + inventory.eq[curr].defense : acc
+  }, 0)
+
+  console.log('eqPlayerAttack', eqPlayerAttack)
+
+  console.log('inventoryDB', inventoryDB)
 
   useEffect(() => {
     if (inventoryDB) {
@@ -93,32 +103,34 @@ const Inventory = ({ data }: any) => {
   }
 
   return (
-    <>
+    <Flex
+      padding={useBreakpointValue({ base: 0, md: 10 })}
+      flexDirection={{ base: 'column', xl: 'row' }}
+      justifyContent={'space-between'}
+    >
       <Flex
-        padding={useBreakpointValue({ base: 0, md: 10 })}
-        flexDirection={{ base: 'column', lg: 'row' }}
-        justifyContent={'space-between'}
+        // marginTop={10}
+        // border={'1px solid blue'}
+        as={motion.div}
+        flex={1}
+        transition={{
+          type: 'spring',
+          damping: 10,
+          mass: 0.75,
+          stiffness: 100,
+        }}
+        initial={{
+          opacity: 0,
+          y: 50,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        flexDir={'column'}
+        justifyContent='space-between'
       >
-        <Flex
-          marginTop={10}
-          as={motion.div}
-          transition={{
-            type: 'spring',
-            damping: 10,
-            mass: 0.75,
-            stiffness: 100,
-          }}
-          initial={{
-            opacity: 0,
-            // y: 50,
-          }}
-          animate={{
-            opacity: 1,
-            // y: 0,
-          }}
-          flexDir={'column'}
-        >
-          <Heading
+        {/* <Heading
             position={'relative'}
             _after={{
               content: "''",
@@ -131,30 +143,35 @@ const Inventory = ({ data }: any) => {
               // bg: 'gray.700',
               zIndex: -1,
             }}
-            marginBottom={14}
+            // marginBottom={14}
             alignSelf={'flex-start'}
             letterSpacing='2px'
           >
             Ekwipunek
-          </Heading>
-          <InventoryEq inventory={inventory} unEquip={unEquip} />
-          {/* <Statistics eq={inventoryDB?.eq} /> */}
-          {/* <Box textAlign={'left'} mt={'auto'}>
+          </Heading> */}
+        <InventoryEq
+          eqPlayerAttack={eqPlayerAttack}
+          eqPlayerDefense={eqPlayerDefense}
+          inventory={inventory}
+          unEquip={unEquip}
+        />
+
+        {/* <Statistics eq={inventoryDB?.eq} /> */}
+        {/* <Box textAlign={'left'} mt={'auto'}>
             <Text>Statystyki</Text>
             <Box>Siła: 1</Box>
             <Box>Inteligencja: 1</Box>
             <Box>Witalność: 1</Box>
             <Box>Skupienie: 1</Box>
           </Box> */}
-        </Flex>
-        <InventoryItems
-          inventory={inventory}
-          itemsCountInventory={itemsCountInventory}
-          eat={eat}
-          equip={equip}
-        />
       </Flex>
-    </>
+      <InventoryItems
+        inventory={inventory}
+        itemsCountInventory={itemsCountInventory}
+        eat={eat}
+        equip={equip}
+      />
+    </Flex>
   )
 }
 
