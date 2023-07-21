@@ -43,12 +43,12 @@ const InventoryItems = ({ inventory, itemsCountInventory, eat, equip }) => {
   ) : (
     <motion.div
       style={{ flex: 1, maxWidth: '700px' }}
-      transition={{
-        type: 'spring',
-        damping: 10,
-        mass: 0.75,
-        stiffness: 100,
-      }}
+      // transition={{
+      //   type: 'spring',
+      //   damping: 10,
+      //   mass: 0.75,
+      //   stiffness: 100,
+      // }}
       initial={{
         opacity: 0,
         y: 50,

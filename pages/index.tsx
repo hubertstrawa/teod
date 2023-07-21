@@ -181,7 +181,8 @@ export default function JoinOurTeam() {
         position: 'top-right',
         isClosable: true,
       })
-      router.push('/')
+      onOpenLoginHandler()
+      // router.push('/')
     } catch (err) {
       console.log('err', err)
       toast({

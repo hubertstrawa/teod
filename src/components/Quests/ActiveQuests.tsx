@@ -22,16 +22,6 @@ const ActiveQuests = ({ questlog }) => {
   const toast = useToast()
 
   useEffect(() => {
-    console.log(' QUESTLOG error', error)
-
-    if (error?.data?.message) {
-      toast({
-        position: 'top-right',
-        status: 'error',
-        title: error.data.message,
-        isClosable: true,
-      })
-    }
     if (data?.message) {
       toast({
         position: 'top-right',
@@ -40,7 +30,7 @@ const ActiveQuests = ({ questlog }) => {
         isClosable: true,
       })
     }
-  }, [error, data])
+  }, [data])
 
   return (
     <Accordion defaultIndex={0}>

@@ -280,7 +280,7 @@ const Battle = ({
                       </Box>
                       {dataAttack?.data?.current?.lootedItem.state ===
                       'rare' ? (
-                        <Text color='teal.900' fontWeight='bold' fontSize='sm'>
+                        <Text color='teal.500' fontWeight='bold' fontSize='sm'>
                           * rzadki *
                         </Text>
                       ) : null}

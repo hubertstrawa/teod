@@ -86,8 +86,8 @@ const Highscores = () => {
                     <Td>{player.level}</Td>
                     <Td>-</Td>
                     <Td>{player.attributes.strength}</Td>
-                    <Td>{player.attributes.intelligence}</Td>
-                    <Td>{spellsLevel}</Td>
+                    <Td paddingLeft={12}>{player.attributes.intelligence}</Td>
+                    <Td paddingLeft={14}>{spellsLevel}</Td>
                     {/* <Td>{player.createdAt.slice(0, 10)}</Td> */}
                     <Td>
                       <Button width='full' variant='outline' isDisabled>

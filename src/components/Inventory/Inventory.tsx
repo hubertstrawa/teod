@@ -113,12 +113,12 @@ const Inventory = ({ data }: any) => {
         // border={'1px solid blue'}
         as={motion.div}
         flex={1}
-        transition={{
-          type: 'spring',
-          damping: 10,
-          mass: 0.75,
-          stiffness: 100,
-        }}
+        // transition={{
+        //   type: 'spring',
+        //   damping: 10,
+        //   mass: 0.75,
+        //   stiffness: 100,
+        // }}
         initial={{
           opacity: 0,
           y: 50,

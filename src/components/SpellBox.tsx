@@ -115,6 +115,16 @@ const SpellBox = ({ player }) => {
                 <Text display='flex' alignItems='center' fontSize='md'>
                   <GiCometSpark style={{ marginRight: '0.5rem' }} />{' '}
                   {spell.power +
+                    player.data.attributes.eqIntelligence +
+                    player.data.attributes.intelligence -
+                    2}
+                  {' - '}
+                  {spell.power +
+                    player.data.attributes.eqIntelligence +
+                    player.data.attributes.intelligence +
+                    5}
+                  {/* 
+                  {spell.power +
                     // player.data.level +
                     player.data.attributes.intelligence -
                     2}
@@ -122,7 +132,7 @@ const SpellBox = ({ player }) => {
                   {spell.power +
                     // player.data.level +
                     player.data.attributes.intelligence +
-                    5}
+                    5} */}
                 </Text>
               )}
               {spell.name === 'Błyskawica' && (

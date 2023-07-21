@@ -30,12 +30,8 @@ const Statistics = ({ attributes, playerGold, playerLevel }: any) => {
   //     }, 0)
   //   : 0
   const [addAttribute, { error, isLoading, data }] = useAddAttributeMutation()
-  console.log('attributes', attributes)
   const content = !!attributes
     ? Object.keys(attributes).map((attr) => {
-        console.log('attr', attr)
-        console.log('attributes', attributes)
-
         const price = Math.pow(attributes[attr], 2) + playerLevel * 100
         return attr !== 'manaVitality' && !attr.includes('eq') ? (
           <Box
