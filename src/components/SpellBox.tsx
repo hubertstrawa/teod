@@ -138,10 +138,13 @@ const SpellBox = ({ player }) => {
               {spell.name === 'Błyskawica' && (
                 <Text display='flex' alignItems='center' fontSize='md'>
                   <GiCometSpark style={{ marginRight: '0.5rem' }} />{' '}
-                  {spell.spellLevel}
+                  {spell.spellLevel +
+                    (player.data.attributes.intelligence +
+                      player.data.attributes.eqIntelligence / 2)}
                   {' - '}
                   {spell.spellLevel +
                     spell.power +
+                    player.data.attributes.eqIntelligence +
                     player.data.attributes.intelligence +
                     10}
                 </Text>
